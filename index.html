@@ -1,48 +1,72 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>HeiLog</title>
 
 <link rel="manifest" href="manifest.json">
 
 <style>
+
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 background:#f8f3ee;
+color:#4b3b31;
+padding-bottom:120px;
+}
+
+.container{
 padding:20px;
-color:#4a3b30;
+max-width:700px;
+margin:auto;
 }
 
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
+margin-bottom:20px;
 }
 
 .avatar{
 width:70px;
 height:70px;
 border-radius:50%;
-background:#f1dfd0;
+background:#f1dfd2;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:34px;
+font-size:36px;
+}
+
+h1{
+margin:0;
+font-size:32px;
+}
+
+.subtitle{
+margin-top:5px;
+color:#8e7f74;
 }
 
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:14px;
-margin-top:20px;
+margin-bottom:20px;
 }
 
 .card{
-padding:20px;
 border-radius:24px;
+padding:18px;
 height:120px;
 display:flex;
 flex-direction:column;
@@ -54,40 +78,74 @@ font-size:30px;
 font-size:16px;
 }
 
-.peach{background:#fff0e6;}
-.green{background:#eef8e7;}
-.purple{background:#f2ecff;}
-.yellow{background:#fff7d9;}
+.peach{
+background:#fff0e6;
+}
+
+.green{
+background:#eef8e7;
+}
+
+.purple{
+background:#f1ecff;
+}
+
+.yellow{
+background:#fff6d8;
+}
 
 .panel{
 background:white;
 border-radius:24px;
 padding:18px;
-margin-top:18px;
+margin-bottom:18px;
 }
 
-.food-item{
-padding:12px 0;
-border-bottom:1px solid #eee;
+.panel h2{
+margin-top:0;
+}
+
+.meal{
+margin-bottom:20px;
+}
+
+.meal-title{
+font-weight:700;
+margin-bottom:10px;
+font-size:18px;
+}
+
+input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#f7f1eb;
+margin-bottom:10px;
+font-size:16px;
 }
 
 button{
 border:none;
 background:#c28d63;
 color:white;
-padding:10px 16px;
+padding:12px 18px;
 border-radius:14px;
 font-size:15px;
+font-weight:600;
 }
 
-input{
-width:100%;
-padding:14px;
-margin-top:12px;
-border:none;
+.item{
+background:#faf7f3;
+padding:12px;
 border-radius:14px;
-background:#f6f1eb;
-font-size:16px;
+margin-top:10px;
+}
+
+.small{
+font-size:13px;
+color:#85786f;
+margin-top:5px;
 }
 
 nav{
@@ -99,70 +157,310 @@ background:white;
 display:flex;
 justify-content:space-around;
 padding:14px;
-box-shadow:0 -2px 10px rgba(0,0,0,0.05);
+box-shadow:0 -2px 10px rgba(0,0,0,0.06);
 }
 
 nav div{
 text-align:center;
 font-size:13px;
+color:#75675d;
 }
+
+.total{
+font-size:30px;
+font-weight:700;
+margin-top:10px;
+}
+
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <div class="header">
 <div>
 <h1>HeiLog 🐾</h1>
-<p>記錄生活・超市・貓咪用品</p>
+<div class="subtitle">
+記錄生活・飲食・超市・貓咪用品
+</div>
 </div>
 
-<div class="avatar">🐱</div>
+<div class="avatar">
+🐱
+</div>
 </div>
 
 <div class="grid">
-<div class="card peach">🍜<span>飲食記錄</span></div>
-<div class="card green">🛒<span>超市記錄</span></div>
-<div class="card purple">🐾<span>貓咪用品</span></div>
-<div class="card yellow">📊<span>統計分析</span></div>
+
+<div class="card peach">
+🍳
+<span>每日飲食</span>
 </div>
+
+<div class="card green">
+🛒
+<span>超市記錄</span>
+</div>
+
+<div class="card purple">
+🐾
+<span>貓咪用品</span>
+</div>
+
+<div class="card yellow">
+📊
+<span>生活統計</span>
+</div>
+
+</div>
+
+<!-- 飲食記錄 -->
 
 <div class="panel">
-<h2>今日飲食</h2>
 
-<input id="foodInput" placeholder="今日食咗咩？">
+<h2>🍱 今日飲食記錄</h2>
 
-<button onclick="addFood()">新增記錄</button>
+<!-- 早餐 -->
 
-<div id="foodList"></div>
+<div class="meal">
+<div class="meal-title">早餐</div>
+
+<input id="breakfastInput" placeholder="早餐食咗咩？">
+
+<button onclick="addMeal('breakfast')">
+新增早餐
+</button>
+
+<div id="breakfastList"></div>
 </div>
 
+<!-- 午餐 -->
+
+<div class="meal">
+<div class="meal-title">午餐</div>
+
+<input id="lunchInput" placeholder="午餐食咗咩？">
+
+<button onclick="addMeal('lunch')">
+新增午餐
+</button>
+
+<div id="lunchList"></div>
+</div>
+
+<!-- 晚餐 -->
+
+<div class="meal">
+<div class="meal-title">晚餐</div>
+
+<input id="dinnerInput" placeholder="晚餐食咗咩？">
+
+<button onclick="addMeal('dinner')">
+新增晚餐
+</button>
+
+<div id="dinnerList"></div>
+</div>
+
+</div>
+
+<!-- 超市 -->
+
+<div class="panel">
+
+<h2>🛒 超市記錄</h2>
+
+<input id="storeName" placeholder="邊間超市？">
+<input id="storeItems" placeholder="買咗啲乜？">
+<input id="storePrice" placeholder="幾錢？">
+
+<button onclick="addStore()">
+新增超市記錄
+</button>
+
+<div id="storeList"></div>
+
+</div>
+
+<!-- 貓咪用品 -->
+
+<div class="panel">
+
+<h2>🐱 貓咪用品</h2>
+
+<input id="catItem" placeholder="用品名稱">
+<input id="catDate" placeholder="購買日期">
+
+<button onclick="addCat()">
+新增用品
+</button>
+
+<div id="catList"></div>
+
+</div>
+
+<!-- 統計 -->
+
+<div class="panel">
+
+<h2>📊 本月統計</h2>
+
+<div class="small">超市總開支</div>
+
+<div class="total" id="totalPrice">
+CAD $0
+</div>
+
+</div>
+
+</div>
+
+<nav>
+
+<div>
+🏠
+<br>
+首頁
+</div>
+
+<div>
+🍱
+<br>
+飲食
+</div>
+
+<div>
+🛒
+<br>
+超市
+</div>
+
+<div>
+🐾
+<br>
+貓咪
+</div>
+
+</nav>
+
 <script>
-function addFood(){
-const input=document.getElementById("foodInput");
-const list=document.getElementById("foodList");
 
-if(input.value==="") return;
+let total = localStorage.getItem("totalPrice") || 0;
+document.getElementById("totalPrice").innerHTML = "CAD $" + total;
 
-const item=document.createElement("div");
-item.className="food-item";
-item.innerHTML="<strong>"+input.value+"</strong>";
+function saveData(key, value){
+localStorage.setItem(key, value);
+}
+
+function loadData(key, element){
+const data = localStorage.getItem(key);
+
+if(data){
+document.getElementById(element).innerHTML = data;
+}
+}
+
+function addMeal(type){
+
+const input = document.getElementById(type + "Input");
+const list = document.getElementById(type + "List");
+
+if(input.value === "") return;
+
+const item = document.createElement("div");
+
+item.className = "item";
+
+item.innerHTML = `
+<strong>${input.value}</strong>
+<div class="small">${new Date().toLocaleTimeString()}</div>
+`;
 
 list.prepend(item);
 
-localStorage.setItem("foods",list.innerHTML);
+saveData(type, list.innerHTML);
 
-input.value="";
+input.value = "";
+
 }
 
-window.onload=function(){
-const saved=localStorage.getItem("foods");
+function addStore(){
 
-if(saved){
-document.getElementById("foodList").innerHTML=saved;
+const name = document.getElementById("storeName");
+const items = document.getElementById("storeItems");
+const price = document.getElementById("storePrice");
+
+if(name.value === "" || items.value === "") return;
+
+const list = document.getElementById("storeList");
+
+const item = document.createElement("div");
+
+item.className = "item";
+
+item.innerHTML = `
+<strong>${name.value}</strong>
+<div>${items.value}</div>
+<div class="small">CAD $${price.value}</div>
+`;
+
+list.prepend(item);
+
+saveData("stores", list.innerHTML);
+
+total = Number(total) + Number(price.value || 0);
+
+document.getElementById("totalPrice").innerHTML = "CAD $" + total;
+
+localStorage.setItem("totalPrice", total);
+
+name.value = "";
+items.value = "";
+price.value = "";
+
 }
+
+function addCat(){
+
+const catItem = document.getElementById("catItem");
+const catDate = document.getElementById("catDate");
+
+if(catItem.value === "") return;
+
+const list = document.getElementById("catList");
+
+const item = document.createElement("div");
+
+item.className = "item";
+
+item.innerHTML = `
+<strong>${catItem.value}</strong>
+<div class="small">購買日期：${catDate.value}</div>
+`;
+
+list.prepend(item);
+
+saveData("cats", list.innerHTML);
+
+catItem.value = "";
+catDate.value = "";
+
 }
+
+window.onload = function(){
+
+loadData("breakfast","breakfastList");
+loadData("lunch","lunchList");
+loadData("dinner","dinnerList");
+loadData("stores","storeList");
+loadData("cats","catList");
+
+}
+
 </script>
 
 </body>
 </html>
+```
