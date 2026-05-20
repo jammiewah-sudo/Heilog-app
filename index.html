@@ -71,6 +71,7 @@ display:flex;
 flex-direction:column;
 justify-content:space-between;
 font-size:30px;
+cursor:pointer;
 }
 
 .card span{
@@ -153,6 +154,7 @@ nav div{
 text-align:center;
 font-size:13px;
 color:#74675d;
+cursor:pointer;
 }
 
 .active-nav{
@@ -208,22 +210,26 @@ margin:20px 0 10px;
 
 <div class="grid">
 
-<div class="card peach">
+<div class="card peach"
+onclick="showPage('foodPage',1)">
 🍳
 <span>每日飲食</span>
 </div>
 
-<div class="card green">
+<div class="card green"
+onclick="showPage('storePage',2)">
 🛒
 <span>超市記錄</span>
 </div>
 
-<div class="card purple">
+<div class="card purple"
+onclick="showPage('catPage',3)">
 🐾
 <span>貓咪用品</span>
 </div>
 
-<div class="card yellow">
+<div class="card yellow"
+onclick="showPage('catPage',3)">
 📊
 <span>生活統計</span>
 </div>
@@ -338,25 +344,25 @@ CAD $0
 
 <nav>
 
-<div onclick="showPage('homePage',this)" class="active-nav">
+<div onclick="showPage('homePage',0)" class="active-nav">
 🏠
 <br>
 首頁
 </div>
 
-<div onclick="showPage('foodPage',this)">
+<div onclick="showPage('foodPage',1)">
 🍳
 <br>
 飲食
 </div>
 
-<div onclick="showPage('storePage',this)">
+<div onclick="showPage('storePage',2)">
 🛒
 <br>
 超市
 </div>
 
-<div onclick="showPage('catPage',this)">
+<div onclick="showPage('catPage',3)">
 🐾
 <br>
 貓咪
@@ -366,7 +372,7 @@ CAD $0
 
 <script>
 
-function showPage(pageId,el){
+function showPage(pageId,index){
 
 document.querySelectorAll(".page").forEach(page=>{
 page.classList.remove("active");
@@ -378,7 +384,7 @@ document.querySelectorAll("nav div").forEach(nav=>{
 nav.classList.remove("active-nav");
 });
 
-el.classList.add("active-nav");
+document.querySelectorAll("nav div")[index].classList.add("active-nav");
 
 }
 
