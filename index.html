@@ -6,9 +6,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate</title>
+<title>HeiLog Ultimate v3</title>
 
 <link rel="apple-touch-icon" href="icon.png">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
@@ -154,10 +156,6 @@ font-weight:600;
 cursor:pointer;
 }
 
-button:active{
-transform:scale(.97);
-}
-
 .item{
 background:#faf7f3;
 padding:14px;
@@ -205,7 +203,7 @@ font-weight:700;
 }
 
 .total{
-font-size:32px;
+font-size:42px;
 font-weight:700;
 margin-top:10px;
 }
@@ -249,10 +247,19 @@ border-radius:14px;
 margin-top:10px;
 }
 
-.section-title{
-font-size:20px;
-font-weight:700;
-margin-bottom:16px;
+.table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+.table td{
+padding:12px;
+border-bottom:1px solid #eee;
+}
+
+.chart-box{
+margin-top:20px;
 }
 
 </style>
@@ -269,6 +276,7 @@ margin-bottom:16px;
 
 <div>
 <h1>HeiLog 🐾</h1>
+
 <div class="subtitle">
 Ultimate Life Tracker
 </div>
@@ -324,34 +332,23 @@ onclick="showPage('statsPage',5)">
 
 <h2>🍳 Meals</h2>
 
-<div class="meal-title">Breakfast</div>
+<input id="mealType"
+placeholder="Breakfast / Lunch / Dinner">
 
-<input id="breakfastInput"
+<input id="mealFood"
 placeholder="What did you eat?">
 
-<button onclick="addMeal('Breakfast')">
-Add Breakfast
+<input id="mealRestaurant"
+placeholder="Restaurant name">
+
+<input id="mealPrice"
+placeholder="Price">
+
+<button onclick="addMeal()">
+Add Meal
 </button>
 
 <div id="mealList"></div>
-
-<div class="meal-title">Lunch</div>
-
-<input id="lunchInput"
-placeholder="What did you eat?">
-
-<button onclick="addMeal('Lunch')">
-Add Lunch
-</button>
-
-<div class="meal-title">Dinner</div>
-
-<input id="dinnerInput"
-placeholder="What did you eat?">
-
-<button onclick="addMeal('Dinner')">
-Add Dinner
-</button>
 
 </div>
 
@@ -395,6 +392,9 @@ Add Grocery Record
 <input id="catItem"
 placeholder="Item name">
 
+<input id="catPrice"
+placeholder="Price">
+
 <button onclick="addCat()">
 Add Cat Supply
 </button>
@@ -411,19 +411,16 @@ Add Cat Supply
 
 <div class="panel">
 
-<div class="section-title">
-📅 Monthly Calendar
-</div>
+<h2>📅 Monthly Calendar</h2>
 
-<div class="calendar-grid" id="calendarGrid"></div>
+<div class="calendar-grid"
+id="calendarGrid"></div>
 
 </div>
 
 <div class="panel">
 
-<div class="section-title">
-🕒 Recent Timeline
-</div>
+<h2>🕒 Timeline</h2>
 
 <div id="timeline"></div>
 
@@ -437,15 +434,36 @@ Add Cat Supply
 
 <div class="panel">
 
-<h2>📊 Stats</h2>
-
 <div class="small">
-Total Grocery Spending
+Total Spending
 </div>
 
 <div class="total" id="totalPrice">
 CAD $0
 </div>
+
+<div class="chart-box">
+<canvas id="pieChart"></canvas>
+</div>
+
+<table class="table">
+
+<tr>
+<td>🍳 Food</td>
+<td id="foodTotal">$0</td>
+</tr>
+
+<tr>
+<td>🛒 Grocery</td>
+<td id="groceryTotal">$0</td>
+</tr>
+
+<tr>
+<td>🐾 Cat</td>
+<td id="catTotal">$0</td>
+</tr>
+
+</table>
 
 </div>
 
@@ -500,12 +518,7 @@ let records = JSON.parse(
 localStorage.getItem("records")
 ) || [];
 
-let total = Number(
-localStorage.getItem("totalPrice")
-) || 0;
-
-document.getElementById("totalPrice")
-.innerHTML = "CAD $" + total;
+let pieChart;
 
 function saveRecords(){
 
@@ -534,125 +547,121 @@ nav.classList.remove("active-nav");
 document.querySelectorAll("nav div")[index]
 .classList.add("active-nav");
 
-renderTimeline();
-renderCalendar();
+renderAll();
 
 }
 
-function addRecord(type,title,details){
+function addMeal(){
 
-const today = new Date();
+const type =
+document.getElementById("mealType");
 
-const record = {
-id: Date.now(),
-type:type,
-title:title,
-details:details,
-date: today.toLocaleDateString(),
-time: today.toLocaleTimeString()
-};
+const food =
+document.getElementById("mealFood");
 
-records.unshift(record);
+const restaurant =
+document.getElementById("mealRestaurant");
+
+const price =
+document.getElementById("mealPrice");
+
+if(food.value==="") return;
+
+records.unshift({
+
+id:Date.now(),
+category:"food",
+meal:type.value,
+food:food.value,
+restaurant:restaurant.value,
+price:Number(price.value || 0),
+date:new Date().toLocaleDateString()
+
+});
 
 saveRecords();
+
+type.value="";
+food.value="";
+restaurant.value="";
+price.value="";
 
 renderAll();
 
 }
 
-function addMeal(mealType){
-
-let input;
-
-if(mealType==="Breakfast"){
-input = document.getElementById("breakfastInput");
-}
-
-if(mealType==="Lunch"){
-input = document.getElementById("lunchInput");
-}
-
-if(mealType==="Dinner"){
-input = document.getElementById("dinnerInput");
-}
-
-if(input.value==="") return;
-
-addRecord(
-"meal",
-mealType,
-input.value
-);
-
-input.value="";
-
-}
-
 function addStore(){
 
-const name = document.getElementById("storeName");
-const items = document.getElementById("storeItems");
-const price = document.getElementById("storePrice");
+const name =
+document.getElementById("storeName");
+
+const items =
+document.getElementById("storeItems");
+
+const price =
+document.getElementById("storePrice");
 
 if(name.value==="") return;
 
-addRecord(
-"store",
-name.value,
-items.value + " • CAD $" + price.value
-);
+records.unshift({
 
-total += Number(price.value || 0);
+id:Date.now(),
+category:"grocery",
+store:name.value,
+items:items.value,
+price:Number(price.value || 0),
+date:new Date().toLocaleDateString()
 
-localStorage.setItem(
-"totalPrice",
-total
-);
+});
 
-document.getElementById("totalPrice")
-.innerHTML = "CAD $" + total;
+saveRecords();
 
 name.value="";
 items.value="";
 price.value="";
 
+renderAll();
+
 }
 
 function addCat(){
 
-const catItem = document.getElementById("catItem");
+const item =
+document.getElementById("catItem");
 
-if(catItem.value==="") return;
+const price =
+document.getElementById("catPrice");
 
-addRecord(
-"cat",
-"Cat Supply",
-catItem.value
-);
+if(item.value==="") return;
 
-catItem.value="";
+records.unshift({
+
+id:Date.now(),
+category:"cat",
+item:item.value,
+price:Number(price.value || 0),
+date:new Date().toLocaleDateString()
+
+});
+
+saveRecords();
+
+item.value="";
+price.value="";
+
+renderAll();
 
 }
 
 function deleteRecord(id){
 
 records = records.filter(
-record => record.id !== id
+record=>record.id!==id
 );
 
 saveRecords();
 
 renderAll();
-
-}
-
-function renderAll(){
-
-renderMeals();
-renderStores();
-renderCats();
-renderTimeline();
-renderCalendar();
 
 }
 
@@ -664,7 +673,7 @@ document.getElementById("mealList");
 mealList.innerHTML="";
 
 records
-.filter(r=>r.type==="meal")
+.filter(r=>r.category==="food")
 .forEach(record=>{
 
 mealList.innerHTML += `
@@ -678,15 +687,23 @@ gap:10px;
 ">
 
 <div>
-<strong>${record.title}</strong>
+
+<strong>
+${record.meal}
+</strong>
 
 <div>
-${record.details}
+${record.food}
 </div>
 
 <div class="small">
-${record.date}
+📍 ${record.restaurant}
 </div>
+
+<div class="small">
+💲 CAD $${record.price}
+</div>
+
 </div>
 
 <button
@@ -712,7 +729,7 @@ document.getElementById("storeList");
 storeList.innerHTML="";
 
 records
-.filter(r=>r.type==="store")
+.filter(r=>r.category==="grocery")
 .forEach(record=>{
 
 storeList.innerHTML += `
@@ -726,15 +743,19 @@ gap:10px;
 ">
 
 <div>
-<strong>${record.title}</strong>
+
+<strong>
+${record.store}
+</strong>
 
 <div>
-${record.details}
+${record.items}
 </div>
 
 <div class="small">
-${record.date}
+💲 CAD $${record.price}
 </div>
+
 </div>
 
 <button
@@ -760,7 +781,7 @@ document.getElementById("catList");
 catList.innerHTML="";
 
 records
-.filter(r=>r.type==="cat")
+.filter(r=>r.category==="cat")
 .forEach(record=>{
 
 catList.innerHTML += `
@@ -774,11 +795,15 @@ gap:10px;
 ">
 
 <div>
-<strong>${record.details}</strong>
+
+<strong>
+${record.item}
+</strong>
 
 <div class="small">
-${record.date}
+💲 CAD $${record.price}
 </div>
+
 </div>
 
 <button
@@ -805,17 +830,13 @@ timeline.innerHTML="";
 
 records.slice(0,20).forEach(record=>{
 
-let icon = "📝";
+let icon="🍳";
 
-if(record.type==="meal"){
-icon="🍳";
-}
-
-if(record.type==="store"){
+if(record.category==="grocery"){
 icon="🛒";
 }
 
-if(record.type==="cat"){
+if(record.category==="cat"){
 icon="🐾";
 }
 
@@ -823,12 +844,8 @@ timeline.innerHTML += `
 <div class="timeline-item">
 
 <strong>
-${icon} ${record.title}
+${icon}
 </strong>
-
-<div>
-${record.details}
-</div>
 
 <div class="small">
 ${record.date}
@@ -859,15 +876,15 @@ new Date(record.date).getDate();
 
 if(day===i){
 
-if(record.type==="meal"){
+if(record.category==="food"){
 icons+="🍳";
 }
 
-if(record.type==="store"){
+if(record.category==="grocery"){
 icons+="🛒";
 }
 
-if(record.type==="cat"){
+if(record.category==="cat"){
 icons+="🐾";
 }
 
@@ -890,6 +907,99 @@ ${icons}
 `;
 
 }
+
+}
+
+function renderStats(){
+
+let food=0;
+let grocery=0;
+let cat=0;
+
+records.forEach(record=>{
+
+if(record.category==="food"){
+food+=record.price;
+}
+
+if(record.category==="grocery"){
+grocery+=record.price;
+}
+
+if(record.category==="cat"){
+cat+=record.price;
+}
+
+});
+
+const total =
+food + grocery + cat;
+
+document.getElementById("totalPrice")
+.innerHTML =
+"CAD $" + total.toFixed(2);
+
+document.getElementById("foodTotal")
+.innerHTML =
+"CAD $" + food.toFixed(2);
+
+document.getElementById("groceryTotal")
+.innerHTML =
+"CAD $" + grocery.toFixed(2);
+
+document.getElementById("catTotal")
+.innerHTML =
+"CAD $" + cat.toFixed(2);
+
+const ctx =
+document.getElementById("pieChart");
+
+if(pieChart){
+pieChart.destroy();
+}
+
+pieChart = new Chart(ctx,{
+
+type:"pie",
+
+data:{
+
+labels:[
+"Food",
+"Grocery",
+"Cat"
+],
+
+datasets:[{
+
+data:[
+food,
+grocery,
+cat
+],
+
+backgroundColor:[
+"#ffd6b8",
+"#cfecc4",
+"#dcd1ff"
+]
+
+}]
+
+}
+
+});
+
+}
+
+function renderAll(){
+
+renderMeals();
+renderStores();
+renderCats();
+renderTimeline();
+renderCalendar();
+renderStats();
 
 }
 
