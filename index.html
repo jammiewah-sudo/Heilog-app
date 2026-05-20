@@ -2,11 +2,10 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate v3</title>
+<title>HeiLog Ultimate</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -65,10 +64,6 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-size:34px;
-}
-
-h1{
-font-size:32px;
 }
 
 .subtitle{
@@ -154,6 +149,8 @@ border-radius:14px;
 font-size:15px;
 font-weight:600;
 cursor:pointer;
+width:100%;
+margin-top:6px;
 }
 
 .item{
@@ -176,6 +173,7 @@ padding:8px 12px;
 border:none;
 border-radius:10px;
 font-size:14px;
+width:auto;
 }
 
 nav{
@@ -208,12 +206,6 @@ font-weight:700;
 margin-top:10px;
 }
 
-.meal-title{
-font-size:18px;
-font-weight:700;
-margin:20px 0 10px;
-}
-
 .calendar-grid{
 display:grid;
 grid-template-columns:repeat(7,1fr);
@@ -224,7 +216,7 @@ margin-top:20px;
 .day{
 background:white;
 border-radius:16px;
-padding:12px 8px;
+padding:10px 6px;
 min-height:70px;
 font-size:13px;
 text-align:center;
@@ -240,13 +232,6 @@ font-size:16px;
 line-height:1.5;
 }
 
-.timeline-item{
-background:#faf7f3;
-padding:14px;
-border-radius:14px;
-margin-top:10px;
-}
-
 .table{
 width:100%;
 margin-top:20px;
@@ -258,12 +243,14 @@ padding:12px;
 border-bottom:1px solid #eee;
 }
 
-.chart-box{
-margin-top:20px;
+.timeline-item{
+background:#faf7f3;
+padding:14px;
+border-radius:14px;
+margin-top:10px;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -372,7 +359,7 @@ placeholder="What did you buy?">
 placeholder="Price">
 
 <button onclick="addStore()">
-Add Grocery Record
+Add Grocery
 </button>
 
 <div id="storeList"></div>
@@ -396,7 +383,7 @@ placeholder="Item name">
 placeholder="Price">
 
 <button onclick="addCat()">
-Add Cat Supply
+Add Cat Item
 </button>
 
 <div id="catList"></div>
@@ -442,28 +429,44 @@ Total Spending
 CAD $0
 </div>
 
-<div class="chart-box">
-<canvas id="pieChart"></canvas>
-</div>
+<canvas id="pieChart"
+style="margin-top:20px;"></canvas>
 
 <table class="table">
 
 <tr>
 <td>🍳 Food</td>
-<td id="foodTotal">$0</td>
+<td id="foodTotal">CAD $0</td>
 </tr>
 
 <tr>
 <td>🛒 Grocery</td>
-<td id="groceryTotal">$0</td>
+<td id="groceryTotal">CAD $0</td>
 </tr>
 
 <tr>
 <td>🐾 Cat</td>
-<td id="catTotal">$0</td>
+<td id="catTotal">CAD $0</td>
 </tr>
 
 </table>
+
+<button onclick="exportBackup()">
+☁️ Export Backup
+</button>
+
+<button
+onclick="importBackup()"
+style="background:#8fa77b;">
+📥 Restore Backup
+</button>
+
+<input
+type="file"
+id="backupFile"
+accept=".json"
+style="display:none;"
+onchange="handleImport(event)">
 
 </div>
 
@@ -514,9 +517,9 @@ Stats
 
 <script>
 
-let records = JSON.parse(
-localStorage.getItem("records")
-) || [];
+let records =
+JSON.parse(localStorage.getItem("records"))
+|| [];
 
 let pieChart;
 
@@ -570,11 +573,17 @@ if(food.value==="") return;
 records.unshift({
 
 id:Date.now(),
+
 category:"food",
+
 meal:type.value,
+
 food:food.value,
+
 restaurant:restaurant.value,
+
 price:Number(price.value || 0),
+
 date:new Date().toLocaleDateString()
 
 });
@@ -606,10 +615,15 @@ if(name.value==="") return;
 records.unshift({
 
 id:Date.now(),
+
 category:"grocery",
+
 store:name.value,
+
 items:items.value,
+
 price:Number(price.value || 0),
+
 date:new Date().toLocaleDateString()
 
 });
@@ -637,9 +651,13 @@ if(item.value==="") return;
 records.unshift({
 
 id:Date.now(),
+
 category:"cat",
+
 item:item.value,
+
 price:Number(price.value || 0),
+
 date:new Date().toLocaleDateString()
 
 });
@@ -655,7 +673,8 @@ renderAll();
 
 function deleteRecord(id){
 
-records = records.filter(
+records =
+records.filter(
 record=>record.id!==id
 );
 
@@ -677,6 +696,7 @@ records
 .forEach(record=>{
 
 mealList.innerHTML += `
+
 <div class="item">
 
 <div style="
@@ -715,6 +735,7 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
+
 `;
 
 });
@@ -733,6 +754,7 @@ records
 .forEach(record=>{
 
 storeList.innerHTML += `
+
 <div class="item">
 
 <div style="
@@ -767,6 +789,7 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
+
 `;
 
 });
@@ -785,6 +808,7 @@ records
 .forEach(record=>{
 
 catList.innerHTML += `
+
 <div class="item">
 
 <div style="
@@ -815,6 +839,7 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
+
 `;
 
 });
@@ -841,6 +866,7 @@ icon="🐾";
 }
 
 timeline.innerHTML += `
+
 <div class="timeline-item">
 
 <strong>
@@ -852,6 +878,7 @@ ${record.date}
 </div>
 
 </div>
+
 `;
 
 });
@@ -893,6 +920,7 @@ icons+="🐾";
 });
 
 grid.innerHTML += `
+
 <div class="day">
 
 <div class="day-number">
@@ -904,6 +932,7 @@ ${icons}
 </div>
 
 </div>
+
 `;
 
 }
@@ -989,6 +1018,102 @@ backgroundColor:[
 }
 
 });
+
+}
+
+function exportBackup(){
+
+const backupData = {
+
+records:records,
+
+exportedAt:
+new Date().toISOString()
+
+};
+
+const dataStr =
+JSON.stringify(
+backupData,
+null,
+2
+);
+
+const blob =
+new Blob(
+[dataStr],
+{
+type:"application/json"
+}
+);
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+
+a.download =
+"heilog-backup.json";
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+alert("Backup exported!");
+
+}
+
+function importBackup(){
+
+document
+.getElementById("backupFile")
+.click();
+
+}
+
+function handleImport(event){
+
+const file =
+event.target.files[0];
+
+if(!file) return;
+
+const reader =
+new FileReader();
+
+reader.onload =
+function(e){
+
+try{
+
+const data =
+JSON.parse(e.target.result);
+
+if(data.records){
+
+records =
+data.records;
+
+saveRecords();
+
+renderAll();
+
+alert("Backup restored!");
+
+}
+
+}catch(error){
+
+alert("Import failed");
+
+}
+
+};
+
+reader.readAsText(file);
 
 }
 
