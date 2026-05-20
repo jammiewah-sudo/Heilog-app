@@ -3,8 +3,8 @@
 
 <head>
 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>HeiLog Final Ultimate</title>
 
@@ -307,14 +307,13 @@ color:#4b3d33;
 
 <body>
 
-<!-- HOME -->
-
 <div class="page active" id="homePage">
 
 <div class="header">
 
 <div>
 <h1>HeiLog 🐾</h1>
+
 <div class="subtitle">
 Final Ultimate Version
 </div>
@@ -642,7 +641,7 @@ restaurant:restaurant.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toLocaleDateString()
+date:new Date().toISOString()
 
 });
 
@@ -682,7 +681,7 @@ items:items.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toLocaleDateString()
+date:new Date().toISOString()
 
 });
 
@@ -716,7 +715,7 @@ item:item.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toLocaleDateString()
+date:new Date().toISOString()
 
 });
 
@@ -753,6 +752,10 @@ r=>r.id===id
 
 if(!record) return;
 
+const formattedDate =
+new Date(record.date)
+.toLocaleDateString();
+
 let html = "";
 
 if(record.category==="food"){
@@ -775,7 +778,7 @@ ${record.food}
 </div>
 
 <div class="small">
-📅 ${record.date}
+📅 ${formattedDate}
 </div>
 
 <button
@@ -803,7 +806,7 @@ ${record.items}
 </div>
 
 <div class="small">
-📅 ${record.date}
+📅 ${formattedDate}
 </div>
 
 <button
@@ -831,7 +834,7 @@ ${record.item}
 </div>
 
 <div class="small">
-📅 ${record.date}
+📅 ${formattedDate}
 </div>
 
 <button
@@ -1018,6 +1021,10 @@ if(record.category==="cat"){
 icon="🐾";
 }
 
+const formattedDate =
+new Date(record.date)
+.toLocaleDateString();
+
 timeline.innerHTML += `
 <div
 class="timeline-item"
@@ -1028,7 +1035,7 @@ ${icon}
 </strong>
 
 <div class="small">
-${record.date}
+${formattedDate}
 </div>
 
 </div>
@@ -1045,27 +1052,55 @@ document.getElementById("calendarGrid");
 
 grid.innerHTML="";
 
-for(let i=1;i<=31;i++){
+const today = new Date();
+
+const currentMonth =
+today.getMonth();
+
+const currentYear =
+today.getFullYear();
+
+const daysInMonth =
+new Date(
+currentYear,
+currentMonth + 1,
+0
+).getDate();
+
+for(let i=1;i<=daysInMonth;i++){
 
 let icons="";
 
 records.forEach(record=>{
 
-const day =
-new Date(record.date).getDate();
+const recordDate =
+new Date(record.date);
 
-if(day===i){
+const recordDay =
+recordDate.getDate();
+
+const recordMonth =
+recordDate.getMonth();
+
+const recordYear =
+recordDate.getFullYear();
+
+if(
+recordDay===i &&
+recordMonth===currentMonth &&
+recordYear===currentYear
+){
 
 if(record.category==="food"){
-icons+="🍳";
+icons += "🍳 ";
 }
 
 if(record.category==="grocery"){
-icons+="🛒";
+icons += "🛒 ";
 }
 
 if(record.category==="cat"){
-icons+="🐾";
+icons += "🐾 ";
 }
 
 }
