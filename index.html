@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog</title>
+<title>HeiLog Ultimate</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -15,6 +16,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
 
 body{
@@ -27,10 +29,22 @@ color:#4a3b31;
 display:none;
 padding:20px;
 padding-bottom:120px;
+animation:fade .2s ease;
 }
 
 .active{
 display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
 .header{
@@ -51,6 +65,10 @@ justify-content:center;
 font-size:34px;
 }
 
+h1{
+font-size:32px;
+}
+
 .subtitle{
 margin-top:5px;
 color:#8b7d72;
@@ -64,14 +82,19 @@ margin-top:20px;
 }
 
 .card{
-height:120px;
+height:125px;
 border-radius:24px;
 padding:18px;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
-font-size:30px;
+font-size:32px;
 cursor:pointer;
+transition:.2s;
+}
+
+.card:active{
+transform:scale(.96);
 }
 
 .card span{
@@ -94,11 +117,16 @@ background:#f2ecff;
 background:#fff7d8;
 }
 
+.blue{
+background:#eaf4ff;
+}
+
 .panel{
 background:white;
 border-radius:24px;
 padding:18px;
 margin-bottom:18px;
+box-shadow:0 2px 10px rgba(0,0,0,.03);
 }
 
 .panel h2{
@@ -123,6 +151,11 @@ padding:12px 16px;
 border-radius:14px;
 font-size:15px;
 font-weight:600;
+cursor:pointer;
+}
+
+button:active{
+transform:scale(.97);
 }
 
 .item{
@@ -136,6 +169,15 @@ margin-top:10px;
 font-size:13px;
 color:#85786f;
 margin-top:6px;
+}
+
+.delete-btn{
+background:#f4d8d8;
+color:#8b3d3d;
+padding:8px 12px;
+border:none;
+border-radius:10px;
+font-size:14px;
 }
 
 nav{
@@ -152,7 +194,7 @@ box-shadow:0 -2px 10px rgba(0,0,0,0.06);
 
 nav div{
 text-align:center;
-font-size:13px;
+font-size:12px;
 color:#74675d;
 cursor:pointer;
 }
@@ -162,17 +204,8 @@ color:#c58f65;
 font-weight:700;
 }
 
-.delete-btn{
-background:#f4d8d8;
-color:#8b3d3d;
-padding:8px 12px;
-border:none;
-border-radius:10px;
-font-size:14px;
-}
-
 .total{
-font-size:30px;
+font-size:32px;
 font-weight:700;
 margin-top:10px;
 }
@@ -183,7 +216,47 @@ font-weight:700;
 margin:20px 0 10px;
 }
 
+.calendar-grid{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
+margin-top:20px;
+}
+
+.day{
+background:white;
+border-radius:16px;
+padding:12px 8px;
+min-height:70px;
+font-size:13px;
+text-align:center;
+}
+
+.day-number{
+font-weight:700;
+margin-bottom:6px;
+}
+
+.day-icons{
+font-size:16px;
+line-height:1.5;
+}
+
+.timeline-item{
+background:#faf7f3;
+padding:14px;
+border-radius:14px;
+margin-top:10px;
+}
+
+.section-title{
+font-size:20px;
+font-weight:700;
+margin-bottom:16px;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -196,9 +269,8 @@ margin:20px 0 10px;
 
 <div>
 <h1>HeiLog 🐾</h1>
-
 <div class="subtitle">
-記錄生活・飲食・超市・貓咪用品
+Ultimate Life Tracker
 </div>
 </div>
 
@@ -213,89 +285,97 @@ margin:20px 0 10px;
 <div class="card peach"
 onclick="showPage('foodPage',1)">
 🍳
-<span>每日飲食</span>
+<span>Meals</span>
 </div>
 
 <div class="card green"
 onclick="showPage('storePage',2)">
 🛒
-<span>超市記錄</span>
+<span>Groceries</span>
 </div>
 
 <div class="card purple"
 onclick="showPage('catPage',3)">
 🐾
-<span>貓咪用品</span>
+<span>Cat</span>
+</div>
+
+<div class="card blue"
+onclick="showPage('calendarPage',4)">
+📅
+<span>Calendar</span>
 </div>
 
 <div class="card yellow"
-onclick="showPage('catPage',3)">
+onclick="showPage('statsPage',5)">
 📊
-<span>生活統計</span>
+<span>Stats</span>
 </div>
 
 </div>
 
 </div>
 
-<!-- FOOD PAGE -->
+<!-- FOOD -->
 
 <div class="page" id="foodPage">
 
 <div class="panel">
 
-<h2>🍳 飲食記錄</h2>
+<h2>🍳 Meals</h2>
 
-<div class="meal-title">早餐</div>
+<div class="meal-title">Breakfast</div>
 
-<input id="breakfastInput" placeholder="早餐食咗咩？">
+<input id="breakfastInput"
+placeholder="What did you eat?">
 
-<button onclick="addMeal('breakfast')">
-新增早餐
+<button onclick="addMeal('Breakfast')">
+Add Breakfast
 </button>
 
-<div id="breakfastList"></div>
+<div id="mealList"></div>
 
-<div class="meal-title">午餐</div>
+<div class="meal-title">Lunch</div>
 
-<input id="lunchInput" placeholder="午餐食咗咩？">
+<input id="lunchInput"
+placeholder="What did you eat?">
 
-<button onclick="addMeal('lunch')">
-新增午餐
+<button onclick="addMeal('Lunch')">
+Add Lunch
 </button>
 
-<div id="lunchList"></div>
+<div class="meal-title">Dinner</div>
 
-<div class="meal-title">晚餐</div>
+<input id="dinnerInput"
+placeholder="What did you eat?">
 
-<input id="dinnerInput" placeholder="晚餐食咗咩？">
-
-<button onclick="addMeal('dinner')">
-新增晚餐
+<button onclick="addMeal('Dinner')">
+Add Dinner
 </button>
-
-<div id="dinnerList"></div>
 
 </div>
 
 </div>
 
-<!-- STORE PAGE -->
+<!-- STORE -->
 
 <div class="page" id="storePage">
 
 <div class="panel">
 
-<h2>🛒 超市記錄</h2>
+<h2>🛒 Groceries</h2>
 
-<input id="storeName" placeholder="邊間超市？">
+<input id="storeName"
+placeholder="Store name">
 
-<input id="storeItems" placeholder="買咗啲乜？">
+<input id="storeItems"
+placeholder="What did you buy?">
 
-<input id="storePrice" placeholder="幾錢？">
+<input id="storePrice"
+placeholder="Price">
 
 <button onclick="addStore()">
-新增超市記錄
+Add Grocery Record
 </button>
 
 <div id="storeList"></div>
@@ -304,32 +384,63 @@ onclick="showPage('catPage',3)">
 
 </div>
 
-<!-- CAT PAGE -->
+<!-- CAT -->
 
 <div class="page" id="catPage">
 
 <div class="panel">
 
-<h2>🐾 貓咪用品</h2>
+<h2>🐾 Cat Supplies</h2>
 
-<input id="catItem" placeholder="用品名稱">
-
-<input id="catDate" placeholder="購買日期">
+<input id="catItem"
+placeholder="Item name">
 
 <button onclick="addCat()">
-新增用品
+Add Cat Supply
 </button>
 
 <div id="catList"></div>
 
 </div>
 
+</div>
+
+<!-- CALENDAR -->
+
+<div class="page" id="calendarPage">
+
 <div class="panel">
 
-<h2>📊 本月統計</h2>
+<div class="section-title">
+📅 Monthly Calendar
+</div>
+
+<div class="calendar-grid" id="calendarGrid"></div>
+
+</div>
+
+<div class="panel">
+
+<div class="section-title">
+🕒 Recent Timeline
+</div>
+
+<div id="timeline"></div>
+
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="page" id="statsPage">
+
+<div class="panel">
+
+<h2>📊 Stats</h2>
 
 <div class="small">
-超市總開支
+Total Grocery Spending
 </div>
 
 <div class="total" id="totalPrice">
@@ -344,164 +455,162 @@ CAD $0
 
 <nav>
 
-<div onclick="showPage('homePage',0)" class="active-nav">
+<div onclick="showPage('homePage',0)"
+class="active-nav">
 🏠
 <br>
-首頁
+Home
 </div>
 
 <div onclick="showPage('foodPage',1)">
 🍳
 <br>
-飲食
+Meals
 </div>
 
 <div onclick="showPage('storePage',2)">
 🛒
 <br>
-超市
+Store
 </div>
 
 <div onclick="showPage('catPage',3)">
 🐾
 <br>
-貓咪
+Cats
+</div>
+
+<div onclick="showPage('calendarPage',4)">
+📅
+<br>
+Calendar
+</div>
+
+<div onclick="showPage('statsPage',5)">
+📊
+<br>
+Stats
 </div>
 
 </nav>
 
 <script>
 
-function showPage(pageId,index){
+let records = JSON.parse(
+localStorage.getItem("records")
+) || [];
 
-document.querySelectorAll(".page").forEach(page=>{
-page.classList.remove("active");
-});
+let total = Number(
+localStorage.getItem("totalPrice")
+) || 0;
 
-document.getElementById(pageId).classList.add("active");
+document.getElementById("totalPrice")
+.innerHTML = "CAD $" + total;
 
-document.querySelectorAll("nav div").forEach(nav=>{
-nav.classList.remove("active-nav");
-});
-
-document.querySelectorAll("nav div")[index].classList.add("active-nav");
-
-}
-
-function deleteItem(btn,key,listId){
-
-btn.closest(".item").remove();
+function saveRecords(){
 
 localStorage.setItem(
-key,
-document.getElementById(listId).innerHTML
+"records",
+JSON.stringify(records)
 );
 
 }
 
-function saveData(key,value){
-localStorage.setItem(key,value);
+function showPage(pageId,index){
+
+document.querySelectorAll(".page")
+.forEach(page=>{
+page.classList.remove("active");
+});
+
+document.getElementById(pageId)
+.classList.add("active");
+
+document.querySelectorAll("nav div")
+.forEach(nav=>{
+nav.classList.remove("active-nav");
+});
+
+document.querySelectorAll("nav div")[index]
+.classList.add("active-nav");
+
+renderTimeline();
+renderCalendar();
+
 }
 
-function loadData(key,element){
+function addRecord(type,title,details){
 
-const data=localStorage.getItem(key);
+const today = new Date();
 
-if(data){
-document.getElementById(element).innerHTML=data;
+const record = {
+id: Date.now(),
+type:type,
+title:title,
+details:details,
+date: today.toLocaleDateString(),
+time: today.toLocaleTimeString()
+};
+
+records.unshift(record);
+
+saveRecords();
+
+renderAll();
+
 }
 
+function addMeal(mealType){
+
+let input;
+
+if(mealType==="Breakfast"){
+input = document.getElementById("breakfastInput");
 }
 
-function addMeal(type){
+if(mealType==="Lunch"){
+input = document.getElementById("lunchInput");
+}
 
-const input=document.getElementById(type+"Input");
+if(mealType==="Dinner"){
+input = document.getElementById("dinnerInput");
+}
 
 if(input.value==="") return;
 
-const list=document.getElementById(type+"List");
-
-const item=document.createElement("div");
-
-item.className="item";
-
-item.innerHTML=`
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-
-<div>
-<strong>${input.value}</strong>
-
-<div class="small">
-${new Date().toLocaleString()}
-</div>
-</div>
-
-<button
-class="delete-btn"
-onclick="deleteItem(this,'${type}','${type}List')">
-🗑️
-</button>
-
-</div>
-`;
-
-list.prepend(item);
-
-saveData(type,list.innerHTML);
+addRecord(
+"meal",
+mealType,
+input.value
+);
 
 input.value="";
 
 }
 
-let total=localStorage.getItem("totalPrice") || 0;
-
-document.getElementById("totalPrice").innerHTML="CAD $"+total;
-
 function addStore(){
 
-const name=document.getElementById("storeName");
-const items=document.getElementById("storeItems");
-const price=document.getElementById("storePrice");
+const name = document.getElementById("storeName");
+const items = document.getElementById("storeItems");
+const price = document.getElementById("storePrice");
 
 if(name.value==="") return;
 
-const list=document.getElementById("storeList");
+addRecord(
+"store",
+name.value,
+items.value + " • CAD $" + price.value
+);
 
-const item=document.createElement("div");
+total += Number(price.value || 0);
 
-item.className="item";
+localStorage.setItem(
+"totalPrice",
+total
+);
 
-item.innerHTML=`
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-
-<div>
-<strong>${name.value}</strong>
-
-<div>${items.value}</div>
-
-<div class="small">
-CAD $${price.value}
-</div>
-</div>
-
-<button
-class="delete-btn"
-onclick="deleteItem(this,'stores','storeList')">
-🗑️
-</button>
-
-</div>
-`;
-
-list.prepend(item);
-
-saveData("stores",list.innerHTML);
-
-total=Number(total)+Number(price.value || 0);
-
-localStorage.setItem("totalPrice",total);
-
-document.getElementById("totalPrice").innerHTML="CAD $"+total;
+document.getElementById("totalPrice")
+.innerHTML = "CAD $" + total;
 
 name.value="";
 items.value="";
@@ -511,55 +620,280 @@ price.value="";
 
 function addCat(){
 
-const catItem=document.getElementById("catItem");
-const catDate=document.getElementById("catDate");
+const catItem = document.getElementById("catItem");
 
 if(catItem.value==="") return;
 
-const list=document.getElementById("catList");
+addRecord(
+"cat",
+"Cat Supply",
+catItem.value
+);
 
-const item=document.createElement("div");
+catItem.value="";
 
-item.className="item";
+}
 
-item.innerHTML=`
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+function deleteRecord(id){
+
+records = records.filter(
+record => record.id !== id
+);
+
+saveRecords();
+
+renderAll();
+
+}
+
+function renderAll(){
+
+renderMeals();
+renderStores();
+renderCats();
+renderTimeline();
+renderCalendar();
+
+}
+
+function renderMeals(){
+
+const mealList =
+document.getElementById("mealList");
+
+mealList.innerHTML="";
+
+records
+.filter(r=>r.type==="meal")
+.forEach(record=>{
+
+mealList.innerHTML += `
+<div class="item">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+">
 
 <div>
-<strong>${catItem.value}</strong>
+<strong>${record.title}</strong>
+
+<div>
+${record.details}
+</div>
 
 <div class="small">
-購買日期：${catDate.value}
+${record.date}
 </div>
 </div>
 
 <button
 class="delete-btn"
-onclick="deleteItem(this,'cats','catList')">
+onclick="deleteRecord(${record.id})">
 🗑️
 </button>
 
 </div>
+
+</div>
 `;
 
-list.prepend(item);
-
-saveData("cats",list.innerHTML);
-
-catItem.value="";
-catDate.value="";
+});
 
 }
 
-window.onload=function(){
+function renderStores(){
 
-loadData("breakfast","breakfastList");
-loadData("lunch","lunchList");
-loadData("dinner","dinnerList");
-loadData("stores","storeList");
-loadData("cats","catList");
+const storeList =
+document.getElementById("storeList");
+
+storeList.innerHTML="";
+
+records
+.filter(r=>r.type==="store")
+.forEach(record=>{
+
+storeList.innerHTML += `
+<div class="item">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+">
+
+<div>
+<strong>${record.title}</strong>
+
+<div>
+${record.details}
+</div>
+
+<div class="small">
+${record.date}
+</div>
+</div>
+
+<button
+class="delete-btn"
+onclick="deleteRecord(${record.id})">
+🗑️
+</button>
+
+</div>
+
+</div>
+`;
+
+});
 
 }
+
+function renderCats(){
+
+const catList =
+document.getElementById("catList");
+
+catList.innerHTML="";
+
+records
+.filter(r=>r.type==="cat")
+.forEach(record=>{
+
+catList.innerHTML += `
+<div class="item">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+">
+
+<div>
+<strong>${record.details}</strong>
+
+<div class="small">
+${record.date}
+</div>
+</div>
+
+<button
+class="delete-btn"
+onclick="deleteRecord(${record.id})">
+🗑️
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+function renderTimeline(){
+
+const timeline =
+document.getElementById("timeline");
+
+timeline.innerHTML="";
+
+records.slice(0,20).forEach(record=>{
+
+let icon = "📝";
+
+if(record.type==="meal"){
+icon="🍳";
+}
+
+if(record.type==="store"){
+icon="🛒";
+}
+
+if(record.type==="cat"){
+icon="🐾";
+}
+
+timeline.innerHTML += `
+<div class="timeline-item">
+
+<strong>
+${icon} ${record.title}
+</strong>
+
+<div>
+${record.details}
+</div>
+
+<div class="small">
+${record.date}
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+function renderCalendar(){
+
+const grid =
+document.getElementById("calendarGrid");
+
+grid.innerHTML="";
+
+for(let i=1;i<=31;i++){
+
+let icons="";
+
+records.forEach(record=>{
+
+const day =
+new Date(record.date).getDate();
+
+if(day===i){
+
+if(record.type==="meal"){
+icons+="🍳";
+}
+
+if(record.type==="store"){
+icons+="🛒";
+}
+
+if(record.type==="cat"){
+icons+="🐾";
+}
+
+}
+
+});
+
+grid.innerHTML += `
+<div class="day">
+
+<div class="day-number">
+${i}
+</div>
+
+<div class="day-icons">
+${icons}
+</div>
+
+</div>
+`;
+
+}
+
+}
+
+renderAll();
 
 </script>
 
