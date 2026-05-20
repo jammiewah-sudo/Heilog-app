@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>HeiLog Final Ultimate</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -22,15 +23,15 @@ box-sizing:border-box;
 
 body{
 font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:#f8f3ee;
-color:#4a3b31;
+background:#f7f3ef;
+color:#4b3d33;
 }
 
 .page{
 display:none;
 padding:20px;
 padding-bottom:120px;
-animation:fade .2s ease;
+animation:fade .25s ease;
 }
 
 .active{
@@ -52,30 +53,33 @@ transform:translateY(0);
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:20px;
+margin-bottom:24px;
+}
+
+h1{
+font-size:34px;
+}
+
+.subtitle{
+margin-top:6px;
+color:#8f8177;
 }
 
 .avatar{
-width:70px;
-height:70px;
+width:72px;
+height:72px;
 border-radius:50%;
-background:#f1dfd2;
+background:#f1ddd0;
 display:flex;
 align-items:center;
 justify-content:center;
 font-size:34px;
 }
 
-.subtitle{
-margin-top:5px;
-color:#8b7d72;
-}
-
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:14px;
-margin-top:20px;
 }
 
 .card{
@@ -87,7 +91,7 @@ flex-direction:column;
 justify-content:space-between;
 font-size:32px;
 cursor:pointer;
-transition:.2s;
+transition:.15s;
 }
 
 .card:active{
@@ -98,32 +102,18 @@ transform:scale(.96);
 font-size:16px;
 }
 
-.peach{
-background:#fff0e6;
-}
-
-.green{
-background:#eef8e7;
-}
-
-.purple{
-background:#f2ecff;
-}
-
-.yellow{
-background:#fff7d8;
-}
-
-.blue{
-background:#eaf4ff;
-}
+.peach{background:#fff0e5;}
+.green{background:#ebf7e5;}
+.purple{background:#efe8ff;}
+.blue{background:#e9f4ff;}
+.yellow{background:#fff6d8;}
 
 .panel{
 background:white;
 border-radius:24px;
 padding:18px;
 margin-bottom:18px;
-box-shadow:0 2px 10px rgba(0,0,0,.03);
+box-shadow:0 2px 12px rgba(0,0,0,.04);
 }
 
 .panel h2{
@@ -135,7 +125,7 @@ width:100%;
 padding:14px;
 border:none;
 border-radius:14px;
-background:#f7f1eb;
+background:#f7f2ed;
 margin-bottom:10px;
 font-size:16px;
 }
@@ -144,66 +134,49 @@ button{
 border:none;
 background:#c58f65;
 color:white;
-padding:12px 16px;
+padding:14px;
 border-radius:14px;
 font-size:15px;
 font-weight:600;
 cursor:pointer;
 width:100%;
-margin-top:6px;
+margin-top:8px;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+.secondary-btn{
+background:#91a77c;
+}
+
+.delete-btn{
+background:#f6dddd;
+color:#8d4343;
+width:auto;
+padding:8px 12px;
+font-size:14px;
 }
 
 .item{
 background:#faf7f3;
 padding:14px;
-border-radius:14px;
-margin-top:10px;
+border-radius:16px;
+margin-top:12px;
+}
+
+.item-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
 }
 
 .small{
 font-size:13px;
-color:#85786f;
-margin-top:6px;
-}
-
-.delete-btn{
-background:#f4d8d8;
-color:#8b3d3d;
-padding:8px 12px;
-border:none;
-border-radius:10px;
-font-size:14px;
-width:auto;
-}
-
-nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-display:flex;
-justify-content:space-around;
-padding:14px;
-box-shadow:0 -2px 10px rgba(0,0,0,0.06);
-}
-
-nav div{
-text-align:center;
-font-size:12px;
-color:#74675d;
-cursor:pointer;
-}
-
-.active-nav{
-color:#c58f65;
-font-weight:700;
-}
-
-.total{
-font-size:42px;
-font-weight:700;
-margin-top:10px;
+color:#8a7d74;
+margin-top:4px;
 }
 
 .calendar-grid{
@@ -217,9 +190,10 @@ margin-top:20px;
 background:white;
 border-radius:16px;
 padding:10px 6px;
-min-height:70px;
-font-size:13px;
+min-height:76px;
 text-align:center;
+font-size:13px;
+cursor:pointer;
 }
 
 .day-number{
@@ -230,6 +204,20 @@ margin-bottom:6px;
 .day-icons{
 font-size:16px;
 line-height:1.5;
+}
+
+.timeline-item{
+background:#faf7f3;
+padding:14px;
+border-radius:16px;
+margin-top:10px;
+cursor:pointer;
+}
+
+.total{
+font-size:42px;
+font-weight:700;
+margin-top:8px;
 }
 
 .table{
@@ -243,14 +231,78 @@ padding:12px;
 border-bottom:1px solid #eee;
 }
 
-.timeline-item{
-background:#faf7f3;
+nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+display:flex;
+justify-content:space-around;
 padding:14px;
-border-radius:14px;
-margin-top:10px;
+box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+
+nav div{
+text-align:center;
+font-size:12px;
+color:#7a6e64;
+cursor:pointer;
+}
+
+.active-nav{
+color:#c58f65;
+font-weight:700;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.35);
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:999;
+}
+
+.modal-content{
+background:white;
+width:100%;
+max-width:420px;
+border-radius:28px;
+padding:24px;
+animation:pop .2s ease;
+}
+
+@keyframes pop{
+from{
+transform:scale(.92);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+
+.modal-title{
+font-size:24px;
+font-weight:700;
+margin-bottom:14px;
+}
+
+.close-btn{
+margin-top:18px;
+background:#ece7e2;
+color:#4b3d33;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -263,9 +315,8 @@ margin-top:10px;
 
 <div>
 <h1>HeiLog 🐾</h1>
-
 <div class="subtitle">
-Ultimate Life Tracker
+Final Ultimate Version
 </div>
 </div>
 
@@ -326,7 +377,7 @@ placeholder="Breakfast / Lunch / Dinner">
 placeholder="What did you eat?">
 
 <input id="mealRestaurant"
-placeholder="Restaurant name">
+placeholder="Restaurant">
 
 <input id="mealPrice"
 placeholder="Price">
@@ -341,7 +392,7 @@ Add Meal
 
 </div>
 
-<!-- STORE -->
+<!-- GROCERY -->
 
 <div class="page" id="storePage">
 
@@ -377,7 +428,7 @@ Add Grocery
 <h2>🐾 Cat Supplies</h2>
 
 <input id="catItem"
-placeholder="Item name">
+placeholder="Item">
 
 <input id="catPrice"
 placeholder="Price">
@@ -398,7 +449,7 @@ Add Cat Item
 
 <div class="panel">
 
-<h2>📅 Monthly Calendar</h2>
+<h2>📅 Calendar</h2>
 
 <div class="calendar-grid"
 id="calendarGrid"></div>
@@ -456,8 +507,8 @@ style="margin-top:20px;"></canvas>
 </button>
 
 <button
-onclick="importBackup()"
-style="background:#8fa77b;">
+class="secondary-btn"
+onclick="importBackup()">
 📥 Restore Backup
 </button>
 
@@ -478,48 +529,55 @@ onchange="handleImport(event)">
 
 <div onclick="showPage('homePage',0)"
 class="active-nav">
-🏠
-<br>
-Home
+🏠<br>Home
 </div>
 
 <div onclick="showPage('foodPage',1)">
-🍳
-<br>
-Meals
+🍳<br>Meals
 </div>
 
 <div onclick="showPage('storePage',2)">
-🛒
-<br>
-Store
+🛒<br>Store
 </div>
 
 <div onclick="showPage('catPage',3)">
-🐾
-<br>
-Cats
+🐾<br>Cats
 </div>
 
 <div onclick="showPage('calendarPage',4)">
-📅
-<br>
-Calendar
+📅<br>Calendar
 </div>
 
 <div onclick="showPage('statsPage',5)">
-📊
-<br>
-Stats
+📊<br>Stats
 </div>
 
 </nav>
 
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+<div class="modal-content">
+
+<div id="modalContent"></div>
+
+<button
+class="close-btn"
+onclick="closeModal()">
+Close
+</button>
+
+</div>
+
+</div>
+
 <script>
 
 let records =
-JSON.parse(localStorage.getItem("records"))
-|| [];
+JSON.parse(
+localStorage.getItem("records")
+) || [];
 
 let pieChart;
 
@@ -682,6 +740,122 @@ saveRecords();
 
 renderAll();
 
+closeModal();
+
+}
+
+function openRecord(id){
+
+const record =
+records.find(
+r=>r.id===id
+);
+
+if(!record) return;
+
+let html = "";
+
+if(record.category==="food"){
+
+html = `
+<div class="modal-title">
+🍳 ${record.meal}
+</div>
+
+<div>
+${record.food}
+</div>
+
+<div class="small">
+📍 ${record.restaurant}
+</div>
+
+<div class="small">
+💲 CAD $${record.price}
+</div>
+
+<div class="small">
+📅 ${record.date}
+</div>
+
+<button
+onclick="deleteRecord(${record.id})"
+style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+Delete
+</button>
+`;
+
+}
+
+if(record.category==="grocery"){
+
+html = `
+<div class="modal-title">
+🛒 ${record.store}
+</div>
+
+<div>
+${record.items}
+</div>
+
+<div class="small">
+💲 CAD $${record.price}
+</div>
+
+<div class="small">
+📅 ${record.date}
+</div>
+
+<button
+onclick="deleteRecord(${record.id})"
+style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+Delete
+</button>
+`;
+
+}
+
+if(record.category==="cat"){
+
+html = `
+<div class="modal-title">
+🐾 Cat Supply
+</div>
+
+<div>
+${record.item}
+</div>
+
+<div class="small">
+💲 CAD $${record.price}
+</div>
+
+<div class="small">
+📅 ${record.date}
+</div>
+
+<button
+onclick="deleteRecord(${record.id})"
+style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+Delete
+</button>
+`;
+
+}
+
+document.getElementById("modalContent")
+.innerHTML = html;
+
+document.getElementById("modal")
+.style.display = "flex";
+
+}
+
+function closeModal(){
+
+document.getElementById("modal")
+.style.display = "none";
+
 }
 
 function renderMeals(){
@@ -696,15 +870,9 @@ records
 .forEach(record=>{
 
 mealList.innerHTML += `
-
 <div class="item">
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-">
+<div class="item-top">
 
 <div>
 
@@ -735,7 +903,6 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
-
 `;
 
 });
@@ -754,15 +921,9 @@ records
 .forEach(record=>{
 
 storeList.innerHTML += `
-
 <div class="item">
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-">
+<div class="item-top">
 
 <div>
 
@@ -789,7 +950,6 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
-
 `;
 
 });
@@ -808,15 +968,9 @@ records
 .forEach(record=>{
 
 catList.innerHTML += `
-
 <div class="item">
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-">
+<div class="item-top">
 
 <div>
 
@@ -839,7 +993,6 @@ onclick="deleteRecord(${record.id})">
 </div>
 
 </div>
-
 `;
 
 });
@@ -866,8 +1019,9 @@ icon="🐾";
 }
 
 timeline.innerHTML += `
-
-<div class="timeline-item">
+<div
+class="timeline-item"
+onclick="openRecord(${record.id})">
 
 <strong>
 ${icon}
@@ -878,7 +1032,6 @@ ${record.date}
 </div>
 
 </div>
-
 `;
 
 });
@@ -920,7 +1073,6 @@ icons+="🐾";
 });
 
 grid.innerHTML += `
-
 <div class="day">
 
 <div class="day-number">
@@ -932,7 +1084,6 @@ ${icons}
 </div>
 
 </div>
-
 `;
 
 }
