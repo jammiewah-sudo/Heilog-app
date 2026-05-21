@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Final Ultimate</title>
+<title>HeiLog Ultimate</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -190,10 +190,9 @@ margin-top:20px;
 background:white;
 border-radius:16px;
 padding:10px 6px;
-min-height:76px;
+min-height:80px;
 text-align:center;
 font-size:13px;
-cursor:pointer;
 }
 
 .day-number{
@@ -276,6 +275,8 @@ max-width:420px;
 border-radius:28px;
 padding:24px;
 animation:pop .2s ease;
+max-height:90vh;
+overflow:auto;
 }
 
 @keyframes pop{
@@ -315,7 +316,7 @@ color:#4b3d33;
 <h1>HeiLog 🐾</h1>
 
 <div class="subtitle">
-Final Ultimate Version
+Ultimate Version
 </div>
 </div>
 
@@ -395,7 +396,7 @@ Add Meal
 
 </div>
 
-<!-- GROCERY -->
+<!-- STORE -->
 
 <div class="page" id="storePage">
 
@@ -487,7 +488,8 @@ id="calendarGrid"></div>
 Total Spending
 </div>
 
-<div class="total" id="totalPrice">
+<div class="total"
+id="totalPrice">
 CAD $0
 </div>
 
@@ -567,7 +569,8 @@ class="active-nav">
 
 <!-- MODAL -->
 
-<div class="modal" id="modal">
+<div class="modal"
+id="modal">
 
 <div class="modal-content">
 
@@ -782,40 +785,48 @@ r=>r.id===id
 
 if(!record) return;
 
-const formattedDate =
-new Date(record.date)
-.toLocaleDateString();
-
 let html = "";
 
 if(record.category==="food"){
 
 html = `
+
 <div class="modal-title">
-🍳 ${record.meal}
+✏️ Edit Meal
 </div>
 
-<div>
-${record.food}
-</div>
+<input
+id="editMealType"
+value="${record.meal || ""}">
 
-<div class="small">
-📍 ${record.restaurant}
-</div>
+<input
+id="editMealFood"
+value="${record.food || ""}">
 
-<div class="small">
-💲 CAD $${record.price}
-</div>
+<input
+id="editMealRestaurant"
+value="${record.restaurant || ""}">
 
-<div class="small">
-📅 ${formattedDate}
-</div>
+<input
+id="editMealPrice"
+value="${record.price || 0}">
+
+<input
+type="date"
+id="editMealDate"
+value="${record.date.split("T")[0]}">
+
+<button
+onclick="saveMealEdit(${record.id})">
+Save Changes
+</button>
 
 <button
 onclick="deleteRecord(${record.id})"
-style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
 Delete
 </button>
+
 `;
 
 }
@@ -823,27 +834,39 @@ Delete
 if(record.category==="grocery"){
 
 html = `
+
 <div class="modal-title">
-🛒 ${record.store}
+✏️ Edit Grocery
 </div>
 
-<div>
-${record.items}
-</div>
+<input
+id="editStoreName"
+value="${record.store || ""}">
 
-<div class="small">
-💲 CAD $${record.price}
-</div>
+<input
+id="editStoreItems"
+value="${record.items || ""}">
 
-<div class="small">
-📅 ${formattedDate}
-</div>
+<input
+id="editStorePrice"
+value="${record.price || 0}">
+
+<input
+type="date"
+id="editStoreDate"
+value="${record.date.split("T")[0]}">
+
+<button
+onclick="saveStoreEdit(${record.id})">
+Save Changes
+</button>
 
 <button
 onclick="deleteRecord(${record.id})"
-style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
 Delete
 </button>
+
 `;
 
 }
@@ -851,27 +874,35 @@ Delete
 if(record.category==="cat"){
 
 html = `
+
 <div class="modal-title">
-🐾 Cat Supply
+✏️ Edit Cat Record
 </div>
 
-<div>
-${record.item}
-</div>
+<input
+id="editCatItem"
+value="${record.item || ""}">
 
-<div class="small">
-💲 CAD $${record.price}
-</div>
+<input
+id="editCatPrice"
+value="${record.price || 0}">
 
-<div class="small">
-📅 ${formattedDate}
-</div>
+<input
+type="date"
+id="editCatDate"
+value="${record.date.split("T")[0]}">
+
+<button
+onclick="saveCatEdit(${record.id})">
+Save Changes
+</button>
 
 <button
 onclick="deleteRecord(${record.id})"
-style="margin-top:20px;background:#f4d7d7;color:#8a3e3e;">
+style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
 Delete
 </button>
+
 `;
 
 }
@@ -881,6 +912,87 @@ document.getElementById("modalContent")
 
 document.getElementById("modal")
 .style.display = "flex";
+
+}
+
+function saveMealEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.meal =
+document.getElementById("editMealType").value;
+
+record.food =
+document.getElementById("editMealFood").value;
+
+record.restaurant =
+document.getElementById("editMealRestaurant").value;
+
+record.price =
+Number(
+document.getElementById("editMealPrice").value
+);
+
+record.date =
+document.getElementById("editMealDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function saveStoreEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.store =
+document.getElementById("editStoreName").value;
+
+record.items =
+document.getElementById("editStoreItems").value;
+
+record.price =
+Number(
+document.getElementById("editStorePrice").value
+);
+
+record.date =
+document.getElementById("editStoreDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function saveCatEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.item =
+document.getElementById("editCatItem").value;
+
+record.price =
+Number(
+document.getElementById("editCatPrice").value
+);
+
+record.date =
+document.getElementById("editCatDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
 
 }
 
@@ -929,8 +1041,8 @@ ${record.food}
 
 <button
 class="delete-btn"
-onclick="deleteRecord(${record.id})">
-🗑️
+onclick="openRecord(${record.id})">
+✏️
 </button>
 
 </div>
@@ -976,8 +1088,8 @@ ${record.items}
 
 <button
 class="delete-btn"
-onclick="deleteRecord(${record.id})">
-🗑️
+onclick="openRecord(${record.id})">
+✏️
 </button>
 
 </div>
@@ -1019,8 +1131,8 @@ ${record.item}
 
 <button
 class="delete-btn"
-onclick="deleteRecord(${record.id})">
-🗑️
+onclick="openRecord(${record.id})">
+✏️
 </button>
 
 </div>
