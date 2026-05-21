@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate v5</title>
+<title>HeiLog Ultimate v6</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -94,10 +94,6 @@ cursor:pointer;
 transition:.15s;
 }
 
-.card:active{
-transform:scale(.96);
-}
-
 .card span{
 font-size:16px;
 }
@@ -147,12 +143,16 @@ margin-top:8px;
 background:#91a77c;
 }
 
+.small-btn{
+width:auto;
+padding:8px 14px;
+margin:0;
+font-size:14px;
+}
+
 .delete-btn{
 background:#f6dddd;
 color:#8d4343;
-width:auto;
-padding:8px 12px;
-font-size:14px;
 }
 
 .item{
@@ -175,11 +175,17 @@ color:#8a7d74;
 margin-top:4px;
 }
 
+.calendar-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:16px;
+}
+
 .calendar-grid{
 display:grid;
 grid-template-columns:repeat(7,1fr);
 gap:8px;
-margin-top:20px;
 }
 
 .day{
@@ -225,6 +231,17 @@ border-collapse:collapse;
 .table td{
 padding:12px;
 border-bottom:1px solid #eee;
+}
+
+.month-card{
+background:#faf7f3;
+padding:16px;
+border-radius:18px;
+margin-top:12px;
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
 nav{
@@ -273,18 +290,6 @@ border-radius:28px;
 padding:24px;
 max-height:90vh;
 overflow:auto;
-animation:pop .2s ease;
-}
-
-@keyframes pop{
-from{
-transform:scale(.92);
-opacity:0;
-}
-to{
-transform:scale(1);
-opacity:1;
-}
 }
 
 .modal-title{
@@ -305,15 +310,16 @@ color:#4b3d33;
 
 <body>
 
+<!-- HOME -->
+
 <div class="page active" id="homePage">
 
 <div class="header">
 
 <div>
 <h1>HeiLog 🐾</h1>
-
 <div class="subtitle">
-Ultimate v5
+Ultimate v6
 </div>
 </div>
 
@@ -379,8 +385,7 @@ placeholder="Restaurant">
 <input id="mealPrice"
 placeholder="Price">
 
-<input
-type="date"
+<input type="date"
 id="mealDate">
 
 <button onclick="addMeal()">
@@ -410,8 +415,7 @@ placeholder="What did you buy?">
 <input id="storePrice"
 placeholder="Price">
 
-<input
-type="date"
+<input type="date"
 id="storeDate">
 
 <button onclick="addStore()">
@@ -438,8 +442,7 @@ placeholder="Item">
 <input id="catPrice"
 placeholder="Price">
 
-<input
-type="date"
+<input type="date"
 id="catDate">
 
 <button onclick="addCat()">
@@ -458,7 +461,25 @@ Add Cat Item
 
 <div class="panel">
 
-<h2>📅 Calendar</h2>
+<div class="calendar-top">
+
+<button
+class="small-btn"
+onclick="changeMonth(-1)">
+←
+</button>
+
+<h2 id="calendarTitle">
+Month
+</h2>
+
+<button
+class="small-btn"
+onclick="changeMonth(1)">
+→
+</button>
+
+</div>
 
 <div class="calendar-grid"
 id="calendarGrid"></div>
@@ -482,7 +503,7 @@ id="calendarGrid"></div>
 <div class="panel">
 
 <div class="small">
-Total Spending
+Current Month Total
 </div>
 
 <div class="total"
@@ -512,22 +533,13 @@ style="margin-top:20px;"></canvas>
 
 </table>
 
-<button onclick="exportBackup()">
-☁️ Export Backup
-</button>
+</div>
 
-<button
-class="secondary-btn"
-onclick="importBackup()">
-📥 Restore Backup
-</button>
+<div class="panel">
 
-<input
-type="file"
-id="backupFile"
-accept=".json"
-style="display:none;"
-onchange="handleImport(event)">
+<h2>📅 Monthly History</h2>
+
+<div id="monthlyHistory"></div>
 
 </div>
 
@@ -592,6 +604,12 @@ localStorage.getItem("records")
 
 let pieChart;
 
+let currentMonth =
+new Date().getMonth();
+
+let currentYear =
+new Date().getFullYear();
+
 function saveRecords(){
 
 localStorage.setItem(
@@ -625,50 +643,32 @@ renderAll();
 
 function addMeal(){
 
-const type =
-document.getElementById("mealType");
-
-const food =
-document.getElementById("mealFood");
-
-const restaurant =
-document.getElementById("mealRestaurant");
-
-const price =
-document.getElementById("mealPrice");
-
-const date =
-document.getElementById("mealDate");
-
-if(food.value==="") return;
-
 records.unshift({
 
 id:Date.now(),
 
 category:"food",
 
-meal:type.value,
+meal:
+document.getElementById("mealType").value,
 
-food:food.value,
+food:
+document.getElementById("mealFood").value,
 
-restaurant:restaurant.value,
+restaurant:
+document.getElementById("mealRestaurant").value,
 
-price:Number(price.value || 0),
+price:Number(
+document.getElementById("mealPrice").value || 0
+),
 
 date:
-date.value ||
+document.getElementById("mealDate").value ||
 new Date().toISOString().split("T")[0]
 
 });
 
 saveRecords();
-
-type.value="";
-food.value="";
-restaurant.value="";
-price.value="";
-date.value="";
 
 renderAll();
 
@@ -676,44 +676,29 @@ renderAll();
 
 function addStore(){
 
-const name =
-document.getElementById("storeName");
-
-const items =
-document.getElementById("storeItems");
-
-const price =
-document.getElementById("storePrice");
-
-const date =
-document.getElementById("storeDate");
-
-if(name.value==="") return;
-
 records.unshift({
 
 id:Date.now(),
 
 category:"grocery",
 
-store:name.value,
+store:
+document.getElementById("storeName").value,
 
-items:items.value,
+items:
+document.getElementById("storeItems").value,
 
-price:Number(price.value || 0),
+price:Number(
+document.getElementById("storePrice").value || 0
+),
 
 date:
-date.value ||
+document.getElementById("storeDate").value ||
 new Date().toISOString().split("T")[0]
 
 });
 
 saveRecords();
-
-name.value="";
-items.value="";
-price.value="";
-date.value="";
 
 renderAll();
 
@@ -721,387 +706,28 @@ renderAll();
 
 function addCat(){
 
-const item =
-document.getElementById("catItem");
-
-const price =
-document.getElementById("catPrice");
-
-const date =
-document.getElementById("catDate");
-
-if(item.value==="") return;
-
 records.unshift({
 
 id:Date.now(),
 
 category:"cat",
 
-item:item.value,
+item:
+document.getElementById("catItem").value,
 
-price:Number(price.value || 0),
+price:Number(
+document.getElementById("catPrice").value || 0
+),
 
 date:
-date.value ||
+document.getElementById("catDate").value ||
 new Date().toISOString().split("T")[0]
 
 });
 
 saveRecords();
 
-item.value="";
-price.value="";
-date.value="";
-
 renderAll();
-
-}
-
-function deleteRecord(id){
-
-records =
-records.filter(
-record=>record.id!==id
-);
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function openRecord(id){
-
-const record =
-records.find(
-r=>r.id===id
-);
-
-if(!record) return;
-
-let html = "";
-
-if(record.category==="food"){
-
-html = `
-
-<div class="modal-title">
-✏️ Edit Meal
-</div>
-
-<input
-id="editMealType"
-value="${record.meal || ""}">
-
-<input
-id="editMealFood"
-value="${record.food || ""}">
-
-<input
-id="editMealRestaurant"
-value="${record.restaurant || ""}">
-
-<input
-id="editMealPrice"
-value="${record.price || 0}">
-
-<input
-type="date"
-id="editMealDate"
-value="${record.date}">
-
-<button
-onclick="saveMealEdit(${record.id})">
-Save Changes
-</button>
-
-<button
-onclick="deleteRecord(${record.id})"
-style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
-Delete
-</button>
-
-`;
-
-}
-
-if(record.category==="grocery"){
-
-html = `
-
-<div class="modal-title">
-✏️ Edit Grocery
-</div>
-
-<input
-id="editStoreName"
-value="${record.store || ""}">
-
-<input
-id="editStoreItems"
-value="${record.items || ""}">
-
-<input
-id="editStorePrice"
-value="${record.price || 0}">
-
-<input
-type="date"
-id="editStoreDate"
-value="${record.date}">
-
-<button
-onclick="saveStoreEdit(${record.id})">
-Save Changes
-</button>
-
-<button
-onclick="deleteRecord(${record.id})"
-style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
-Delete
-</button>
-
-`;
-
-}
-
-if(record.category==="cat"){
-
-html = `
-
-<div class="modal-title">
-✏️ Edit Cat Record
-</div>
-
-<input
-id="editCatItem"
-value="${record.item || ""}">
-
-<input
-id="editCatPrice"
-value="${record.price || 0}">
-
-<input
-type="date"
-id="editCatDate"
-value="${record.date}">
-
-<button
-onclick="saveCatEdit(${record.id})">
-Save Changes
-</button>
-
-<button
-onclick="deleteRecord(${record.id})"
-style="margin-top:12px;background:#f4d7d7;color:#8a3e3e;">
-Delete
-</button>
-
-`;
-
-}
-
-document.getElementById("modalContent")
-.innerHTML = html;
-
-document.getElementById("modal")
-.style.display = "flex";
-
-}
-
-function saveMealEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.meal =
-document.getElementById("editMealType").value;
-
-record.food =
-document.getElementById("editMealFood").value;
-
-record.restaurant =
-document.getElementById("editMealRestaurant").value;
-
-record.price =
-Number(
-document.getElementById("editMealPrice").value
-);
-
-record.date =
-document.getElementById("editMealDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function saveStoreEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.store =
-document.getElementById("editStoreName").value;
-
-record.items =
-document.getElementById("editStoreItems").value;
-
-record.price =
-Number(
-document.getElementById("editStorePrice").value
-);
-
-record.date =
-document.getElementById("editStoreDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function saveCatEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.item =
-document.getElementById("editCatItem").value;
-
-record.price =
-Number(
-document.getElementById("editCatPrice").value
-);
-
-record.date =
-document.getElementById("editCatDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function openDayRecords(day){
-
-const today = new Date();
-
-const currentMonth =
-today.getMonth();
-
-const currentYear =
-today.getFullYear();
-
-const filtered =
-records.filter(record=>{
-
-const parts =
-record.date.split("-");
-
-const year =
-Number(parts[0]);
-
-const month =
-Number(parts[1]) - 1;
-
-const recordDay =
-Number(parts[2]);
-
-return (
-recordDay===day &&
-month===currentMonth &&
-year===currentYear
-);
-
-});
-
-let html = `
-<div class="modal-title">
-📅 Day ${day}
-</div>
-`;
-
-if(filtered.length===0){
-
-html += `
-<div class="small">
-No records
-</div>
-`;
-
-}else{
-
-filtered.forEach(record=>{
-
-let icon = "🍳";
-let title = "";
-
-if(record.category==="food"){
-icon = "🍳";
-title = record.food;
-}
-
-if(record.category==="grocery"){
-icon = "🛒";
-title = record.items;
-}
-
-if(record.category==="cat"){
-icon = "🐾";
-title = record.item;
-}
-
-html += `
-
-<div
-style="
-padding:12px;
-background:#f7f2ed;
-border-radius:14px;
-margin-top:10px;
-cursor:pointer;
-"
-onclick="openRecord(${record.id})">
-
-<strong>
-${icon} ${title}
-</strong>
-
-<div class="small">
-CAD $${record.price}
-</div>
-
-</div>
-
-`;
-
-});
-
-}
-
-document.getElementById("modalContent")
-.innerHTML = html;
-
-document.getElementById("modal")
-.style.display = "flex";
-
-}
-
-function closeModal(){
-
-document.getElementById("modal")
-.style.display = "none";
 
 }
 
@@ -1124,11 +750,11 @@ mealList.innerHTML += `
 <div>
 
 <strong>
-${record.meal}
+${record.food}
 </strong>
 
-<div>
-${record.food}
+<div class="small">
+${record.meal}
 </div>
 
 <div class="small">
@@ -1140,13 +766,13 @@ ${record.food}
 </div>
 
 <div class="small">
-💲 CAD $${record.price}
+CAD $${record.price}
 </div>
 
 </div>
 
 <button
-class="delete-btn"
+class="small-btn"
 onclick="openRecord(${record.id})">
 ✏️
 </button>
@@ -1182,7 +808,7 @@ storeList.innerHTML += `
 ${record.store}
 </strong>
 
-<div>
+<div class="small">
 ${record.items}
 </div>
 
@@ -1191,13 +817,13 @@ ${record.items}
 </div>
 
 <div class="small">
-💲 CAD $${record.price}
+CAD $${record.price}
 </div>
 
 </div>
 
 <button
-class="delete-btn"
+class="small-btn"
 onclick="openRecord(${record.id})">
 ✏️
 </button>
@@ -1238,13 +864,13 @@ ${record.item}
 </div>
 
 <div class="small">
-💲 CAD $${record.price}
+CAD $${record.price}
 </div>
 
 </div>
 
 <button
-class="delete-btn"
+class="small-btn"
 onclick="openRecord(${record.id})">
 ✏️
 </button>
@@ -1258,50 +884,242 @@ onclick="openRecord(${record.id})">
 
 }
 
-function renderTimeline(){
+function openRecord(id){
 
-const timeline =
-document.getElementById("timeline");
+const record =
+records.find(r=>r.id===id);
 
-timeline.innerHTML="";
-
-records.slice(0,20).forEach(record=>{
-
-let icon="🍳";
-let title="";
+let html="";
 
 if(record.category==="food"){
-icon="🍳";
-title=record.food;
+
+html = `
+
+<div class="modal-title">
+✏️ Edit Meal
+</div>
+
+<input id="editMealFood"
+value="${record.food}">
+
+<input id="editMealType"
+value="${record.meal}">
+
+<input id="editMealRestaurant"
+value="${record.restaurant}">
+
+<input id="editMealPrice"
+value="${record.price}">
+
+<input type="date"
+id="editMealDate"
+value="${record.date}">
+
+<button onclick="saveMealEdit(${record.id})">
+Save
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteRecord(${record.id})">
+Delete
+</button>
+
+`;
+
 }
 
 if(record.category==="grocery"){
-icon="🛒";
-title=record.items;
+
+html = `
+
+<div class="modal-title">
+✏️ Edit Grocery
+</div>
+
+<input id="editStoreName"
+value="${record.store}">
+
+<input id="editStoreItems"
+value="${record.items}">
+
+<input id="editStorePrice"
+value="${record.price}">
+
+<input type="date"
+id="editStoreDate"
+value="${record.date}">
+
+<button onclick="saveStoreEdit(${record.id})">
+Save
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteRecord(${record.id})">
+Delete
+</button>
+
+`;
+
 }
 
 if(record.category==="cat"){
-icon="🐾";
-title=record.item;
-}
 
-timeline.innerHTML += `
-<div
-class="timeline-item"
-onclick="openRecord(${record.id})">
+html = `
 
-<strong>
-${icon} ${title}
-</strong>
-
-<div class="small">
-${record.date}
+<div class="modal-title">
+✏️ Edit Cat
 </div>
 
-</div>
+<input id="editCatItem"
+value="${record.item}">
+
+<input id="editCatPrice"
+value="${record.price}">
+
+<input type="date"
+id="editCatDate"
+value="${record.date}">
+
+<button onclick="saveCatEdit(${record.id})">
+Save
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteRecord(${record.id})">
+Delete
+</button>
+
 `;
 
-});
+}
+
+document.getElementById("modalContent")
+.innerHTML = html;
+
+document.getElementById("modal")
+.style.display = "flex";
+
+}
+
+function saveMealEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.food =
+document.getElementById("editMealFood").value;
+
+record.meal =
+document.getElementById("editMealType").value;
+
+record.restaurant =
+document.getElementById("editMealRestaurant").value;
+
+record.price =
+Number(document.getElementById("editMealPrice").value);
+
+record.date =
+document.getElementById("editMealDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function saveStoreEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.store =
+document.getElementById("editStoreName").value;
+
+record.items =
+document.getElementById("editStoreItems").value;
+
+record.price =
+Number(document.getElementById("editStorePrice").value);
+
+record.date =
+document.getElementById("editStoreDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function saveCatEdit(id){
+
+const record =
+records.find(r=>r.id===id);
+
+record.item =
+document.getElementById("editCatItem").value;
+
+record.price =
+Number(document.getElementById("editCatPrice").value);
+
+record.date =
+document.getElementById("editCatDate").value;
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function deleteRecord(id){
+
+records =
+records.filter(r=>r.id!==id);
+
+saveRecords();
+
+renderAll();
+
+closeModal();
+
+}
+
+function closeModal(){
+
+document.getElementById("modal")
+.style.display = "none";
+
+}
+
+function changeMonth(direction){
+
+currentMonth += direction;
+
+if(currentMonth<0){
+
+currentMonth=11;
+currentYear--;
+
+}
+
+if(currentMonth>11){
+
+currentMonth=0;
+currentYear++;
+
+}
+
+renderCalendar();
+renderTimeline();
+renderStats();
 
 }
 
@@ -1312,13 +1130,16 @@ document.getElementById("calendarGrid");
 
 grid.innerHTML="";
 
-const today = new Date();
+const monthNames = [
+"January","February","March",
+"April","May","June",
+"July","August","September",
+"October","November","December"
+];
 
-const currentMonth =
-today.getMonth();
-
-const currentYear =
-today.getFullYear();
+document.getElementById("calendarTitle")
+.innerHTML =
+monthNames[currentMonth] + " " + currentYear;
 
 const daysInMonth =
 new Date(
@@ -1337,19 +1158,14 @@ records.filter(record=>{
 const parts =
 record.date.split("-");
 
-const year =
-Number(parts[0]);
-
-const month =
-Number(parts[1]) - 1;
-
-const day =
-Number(parts[2]);
+const y = Number(parts[0]);
+const m = Number(parts[1]) - 1;
+const d = Number(parts[2]);
 
 return (
-day===i &&
-month===currentMonth &&
-year===currentYear
+d===i &&
+m===currentMonth &&
+y===currentYear
 );
 
 });
@@ -1357,15 +1173,15 @@ year===currentYear
 dayRecords.forEach(record=>{
 
 if(record.category==="food"){
-icons += "🍳 ";
+icons+="🍳 ";
 }
 
 if(record.category==="grocery"){
-icons += "🛒 ";
+icons+="🛒 ";
 }
 
 if(record.category==="cat"){
-icons += "🐾 ";
+icons+="🐾 ";
 }
 
 });
@@ -1392,6 +1208,159 @@ ${icons}
 
 }
 
+function openDayRecords(day){
+
+const filtered =
+records.filter(record=>{
+
+const parts =
+record.date.split("-");
+
+const y = Number(parts[0]);
+const m = Number(parts[1]) - 1;
+const d = Number(parts[2]);
+
+return (
+d===day &&
+m===currentMonth &&
+y===currentYear
+);
+
+});
+
+let html = `
+<div class="modal-title">
+📅 Day ${day}
+</div>
+`;
+
+if(filtered.length===0){
+
+html += `
+<div class="small">
+No records
+</div>
+`;
+
+}else{
+
+filtered.forEach(record=>{
+
+let title = "";
+
+if(record.category==="food"){
+title="🍳 " + record.food;
+}
+
+if(record.category==="grocery"){
+title="🛒 " + record.items;
+}
+
+if(record.category==="cat"){
+title="🐾 " + record.item;
+}
+
+html += `
+
+<div
+style="
+background:#f7f2ed;
+padding:14px;
+border-radius:14px;
+margin-top:10px;
+cursor:pointer;
+"
+onclick="openRecord(${record.id})">
+
+<strong>
+${title}
+</strong>
+
+<div class="small">
+CAD $${record.price}
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+document.getElementById("modalContent")
+.innerHTML = html;
+
+document.getElementById("modal")
+.style.display = "flex";
+
+}
+
+function renderTimeline(){
+
+const timeline =
+document.getElementById("timeline");
+
+timeline.innerHTML="";
+
+const filtered =
+records.filter(record=>{
+
+const parts =
+record.date.split("-");
+
+const y = Number(parts[0]);
+const m = Number(parts[1]) - 1;
+
+return (
+m===currentMonth &&
+y===currentYear
+);
+
+});
+
+filtered.forEach(record=>{
+
+let icon="🍳";
+let title="";
+
+if(record.category==="food"){
+icon="🍳";
+title=record.food;
+}
+
+if(record.category==="grocery"){
+icon="🛒";
+title=record.items;
+}
+
+if(record.category==="cat"){
+icon="🐾";
+title=record.item;
+}
+
+timeline.innerHTML += `
+
+<div
+class="timeline-item"
+onclick="openRecord(${record.id})">
+
+<strong>
+${icon} ${title}
+</strong>
+
+<div class="small">
+${record.date}
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
 function renderStats(){
 
 let food=0;
@@ -1399,6 +1368,17 @@ let grocery=0;
 let cat=0;
 
 records.forEach(record=>{
+
+const parts =
+record.date.split("-");
+
+const y = Number(parts[0]);
+const m = Number(parts[1]) - 1;
+
+if(
+m===currentMonth &&
+y===currentYear
+){
 
 if(record.category==="food"){
 food+=record.price;
@@ -1410,6 +1390,8 @@ grocery+=record.price;
 
 if(record.category==="cat"){
 cat+=record.price;
+}
+
 }
 
 });
@@ -1472,101 +1454,146 @@ backgroundColor:[
 
 });
 
-}
-
-function exportBackup(){
-
-const backupData = {
-
-records:records,
-
-exportedAt:
-new Date().toISOString()
-
-};
-
-const dataStr =
-JSON.stringify(
-backupData,
-null,
-2
-);
-
-const blob =
-new Blob(
-[dataStr],
-{
-type:"application/json"
-}
-);
-
-const url =
-URL.createObjectURL(blob);
-
-const a =
-document.createElement("a");
-
-a.href = url;
-
-a.download =
-"heilog-backup.json";
-
-a.click();
-
-URL.revokeObjectURL(url);
-
-alert("Backup exported!");
+renderMonthlyHistory();
 
 }
 
-function importBackup(){
+function renderMonthlyHistory(){
 
-document
-.getElementById("backupFile")
-.click();
+const container =
+document.getElementById("monthlyHistory");
+
+container.innerHTML="";
+
+const months = {};
+
+records.forEach(record=>{
+
+const parts =
+record.date.split("-");
+
+const key =
+parts[0] + "-" + parts[1];
+
+if(!months[key]){
+months[key]=0;
+}
+
+months[key]+=record.price;
+
+});
+
+Object.keys(months)
+.sort()
+.reverse()
+.forEach(month=>{
+
+container.innerHTML += `
+
+<div
+class="month-card"
+onclick="openMonthDetails('${month}')">
+
+<div>
+<strong>
+${month}
+</strong>
+</div>
+
+<div>
+CAD $${months[month].toFixed(2)}
+</div>
+
+</div>
+
+`;
+
+});
 
 }
 
-function handleImport(event){
+function openMonthDetails(month){
 
-const file =
-event.target.files[0];
+const filtered =
+records.filter(record=>{
 
-if(!file) return;
+return record.date.startsWith(month);
 
-const reader =
-new FileReader();
+});
 
-reader.onload =
-function(e){
+let total=0;
 
-try{
+let html = `
+<div class="modal-title">
+📊 ${month}
+</div>
+`;
 
-const data =
-JSON.parse(e.target.result);
+filtered.forEach(record=>{
 
-if(data.records){
+total += record.price;
 
-records =
-data.records;
+let title="";
 
-saveRecords();
-
-renderAll();
-
-alert("Backup restored!");
-
+if(record.category==="food"){
+title="🍳 " + record.food;
 }
 
-}catch(error){
-
-alert("Import failed");
-
+if(record.category==="grocery"){
+title="🛒 " + record.items;
 }
 
-};
+if(record.category==="cat"){
+title="🐾 " + record.item;
+}
 
-reader.readAsText(file);
+html += `
+
+<div
+style="
+background:#f7f2ed;
+padding:14px;
+border-radius:14px;
+margin-top:10px;
+">
+
+<strong>
+${title}
+</strong>
+
+<div class="small">
+${record.date}
+</div>
+
+<div class="small">
+CAD $${record.price}
+</div>
+
+</div>
+
+`;
+
+});
+
+html += `
+
+<div
+style="
+margin-top:20px;
+font-weight:700;
+font-size:20px;
+">
+Total:
+CAD $${total.toFixed(2)}
+</div>
+
+`;
+
+document.getElementById("modalContent")
+.innerHTML = html;
+
+document.getElementById("modal")
+.style.display = "flex";
 
 }
 
@@ -1575,8 +1602,8 @@ function renderAll(){
 renderMeals();
 renderStores();
 renderCats();
-renderTimeline();
 renderCalendar();
+renderTimeline();
 renderStats();
 
 }
