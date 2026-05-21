@@ -123,7 +123,7 @@ padding:14px;
 border:none;
 border-radius:14px;
 background:#f7f2ed;
-margin-bottom:10px;
+margin-bottom:12px;
 font-size:16px;
 }
 
@@ -138,10 +138,6 @@ font-weight:600;
 cursor:pointer;
 width:100%;
 margin-top:8px;
-}
-
-.secondary-btn{
-background:#91a77c;
 }
 
 .small-btn{
@@ -173,8 +169,8 @@ gap:12px;
 .small{
 font-size:13px;
 color:#8a7d74;
-margin-top:4px;
-margin-bottom:4px;
+margin-bottom:6px;
+margin-top:6px;
 }
 
 .calendar-top{
@@ -379,17 +375,29 @@ onclick="showPage('statsPage',5)">
 
 <h2>🍳 Meals</h2>
 
-<input id="mealType"
-placeholder="Breakfast / Lunch / Dinner">
+<div class="small">
+🍳 Meal Type
+</div>
 
-<input id="mealFood"
-placeholder="What did you eat?">
+<input id="mealType">
 
-<input id="mealRestaurant"
-placeholder="Restaurant">
+<div class="small">
+🍽 Food
+</div>
 
-<input id="mealPrice"
-placeholder="Price">
+<input id="mealFood">
+
+<div class="small">
+📍 Restaurant
+</div>
+
+<input id="mealRestaurant">
+
+<div class="small">
+💰 Price
+</div>
+
+<input id="mealPrice">
 
 <div class="small">
 📅 Date
@@ -416,14 +424,23 @@ Add Meal
 
 <h2>🛒 Groceries</h2>
 
-<input id="storeName"
-placeholder="Store name">
+<div class="small">
+🛒 Store Name
+</div>
 
-<input id="storeItems"
-placeholder="What did you buy?">
+<input id="storeName">
 
-<input id="storePrice"
-placeholder="Price">
+<div class="small">
+📦 Items
+</div>
+
+<input id="storeItems">
+
+<div class="small">
+💰 Price
+</div>
+
+<input id="storePrice">
 
 <div class="small">
 📅 Date
@@ -450,11 +467,17 @@ Add Grocery
 
 <h2>🐾 Cat Supplies</h2>
 
-<input id="catItem"
-placeholder="Item">
+<div class="small">
+🐾 Item
+</div>
 
-<input id="catPrice"
-placeholder="Price">
+<input id="catItem">
+
+<div class="small">
+💰 Price
+</div>
+
+<input id="catPrice">
 
 <div class="small">
 📅 Date
@@ -813,8 +836,8 @@ CAD $${record.price}
 
 <button
 class="small-btn"
-onclick="openRecord(${record.id})">
-✏️
+onclick="deleteRecord(${record.id})">
+🗑
 </button>
 
 </div>
@@ -862,8 +885,8 @@ CAD $${record.price}
 
 <button
 class="small-btn"
-onclick="openRecord(${record.id})">
-✏️
+onclick="deleteRecord(${record.id})">
+🗑
 </button>
 
 </div>
@@ -907,8 +930,8 @@ CAD $${record.price}
 
 <button
 class="small-btn"
-onclick="openRecord(${record.id})">
-✏️
+onclick="deleteRecord(${record.id})">
+🗑
 </button>
 
 </div>
@@ -920,39 +943,6 @@ onclick="openRecord(${record.id})">
 
 }
 
-function openRecord(id){
-
-const record =
-records.find(r=>r.id===id);
-
-let html = `
-<div class="modal-title">
-Edit Record
-</div>
-
-<div class="small">
-Date: ${record.date}
-</div>
-
-<div class="small">
-Price: CAD $${record.price}
-</div>
-
-<button
-onclick="deleteRecord(${record.id})"
-class="delete-btn">
-Delete
-</button>
-`;
-
-document.getElementById("modalContent")
-.innerHTML = html;
-
-document.getElementById("modal")
-.style.display = "flex";
-
-}
-
 function deleteRecord(id){
 
 records =
@@ -961,8 +951,6 @@ records.filter(r=>r.id!==id);
 saveRecords();
 
 renderAll();
-
-closeModal();
 
 }
 
