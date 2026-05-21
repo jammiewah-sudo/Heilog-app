@@ -381,6 +381,10 @@ placeholder="Restaurant">
 <input id="mealPrice"
 placeholder="Price">
 
+<input
+type="date"
+id="mealDate">
+
 <button onclick="addMeal()">
 Add Meal
 </button>
@@ -408,6 +412,10 @@ placeholder="What did you buy?">
 <input id="storePrice"
 placeholder="Price">
 
+<input
+type="date"
+id="storeDate">
+
 <button onclick="addStore()">
 Add Grocery
 </button>
@@ -431,6 +439,10 @@ placeholder="Item">
 
 <input id="catPrice"
 placeholder="Price">
+
+<input
+type="date"
+id="catDate">
 
 <button onclick="addCat()">
 Add Cat Item
@@ -625,6 +637,9 @@ document.getElementById("mealRestaurant");
 const price =
 document.getElementById("mealPrice");
 
+const date =
+document.getElementById("mealDate");
+
 if(food.value==="") return;
 
 records.unshift({
@@ -641,7 +656,9 @@ restaurant:restaurant.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toISOString()
+date:
+date.value ||
+new Date().toISOString()
 
 });
 
@@ -651,6 +668,7 @@ type.value="";
 food.value="";
 restaurant.value="";
 price.value="";
+date.value="";
 
 renderAll();
 
@@ -667,6 +685,9 @@ document.getElementById("storeItems");
 const price =
 document.getElementById("storePrice");
 
+const date =
+document.getElementById("storeDate");
+
 if(name.value==="") return;
 
 records.unshift({
@@ -681,7 +702,9 @@ items:items.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toISOString()
+date:
+date.value ||
+new Date().toISOString()
 
 });
 
@@ -690,6 +713,7 @@ saveRecords();
 name.value="";
 items.value="";
 price.value="";
+date.value="";
 
 renderAll();
 
@@ -703,6 +727,9 @@ document.getElementById("catItem");
 const price =
 document.getElementById("catPrice");
 
+const date =
+document.getElementById("catDate");
+
 if(item.value==="") return;
 
 records.unshift({
@@ -715,7 +742,9 @@ item:item.value,
 
 price:Number(price.value || 0),
 
-date:new Date().toISOString()
+date:
+date.value ||
+new Date().toISOString()
 
 });
 
@@ -723,6 +752,7 @@ saveRecords();
 
 item.value="";
 price.value="";
+date.value="";
 
 renderAll();
 
