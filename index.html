@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate v6</title>
+<title>HeiLog Ultimate Final</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -74,6 +74,7 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-size:34px;
+cursor:pointer;
 }
 
 .grid{
@@ -173,6 +174,7 @@ gap:12px;
 font-size:13px;
 color:#8a7d74;
 margin-top:4px;
+margin-bottom:4px;
 }
 
 .calendar-top{
@@ -318,12 +320,16 @@ color:#4b3d33;
 
 <div>
 <h1>HeiLog 🐾</h1>
+
 <div class="subtitle">
-Ultimate v6
+Ultimate Final
 </div>
 </div>
 
-<div class="avatar">
+<div
+class="avatar"
+onclick="changeAvatar()"
+id="avatar">
 🐱
 </div>
 
@@ -385,6 +391,10 @@ placeholder="Restaurant">
 <input id="mealPrice"
 placeholder="Price">
 
+<div class="small">
+📅 Date
+</div>
+
 <input type="date"
 id="mealDate">
 
@@ -415,6 +425,10 @@ placeholder="What did you buy?">
 <input id="storePrice"
 placeholder="Price">
 
+<div class="small">
+📅 Date
+</div>
+
 <input type="date"
 id="storeDate">
 
@@ -441,6 +455,10 @@ placeholder="Item">
 
 <input id="catPrice"
 placeholder="Price">
+
+<div class="small">
+📅 Date
+</div>
 
 <input type="date"
 id="catDate">
@@ -598,9 +616,7 @@ Close
 <script>
 
 let records =
-JSON.parse(
-localStorage.getItem("records")
-) || [];
+JSON.parse(localStorage.getItem("records")) || [];
 
 let pieChart;
 
@@ -616,6 +632,35 @@ localStorage.setItem(
 "records",
 JSON.stringify(records)
 );
+
+}
+
+function changeAvatar(){
+
+const icon =
+prompt(
+"Choose your icon 🐱🐶🦊🐼🐹🐰"
+);
+
+if(!icon) return;
+
+localStorage.setItem(
+"heilogAvatar",
+icon
+);
+
+document.getElementById("avatar")
+.innerHTML = icon;
+
+}
+
+const savedAvatar =
+localStorage.getItem("heilogAvatar");
+
+if(savedAvatar){
+
+document.getElementById("avatar")
+.innerHTML = savedAvatar;
 
 }
 
@@ -669,7 +714,6 @@ new Date().toISOString().split("T")[0]
 });
 
 saveRecords();
-
 renderAll();
 
 }
@@ -699,7 +743,6 @@ new Date().toISOString().split("T")[0]
 });
 
 saveRecords();
-
 renderAll();
 
 }
@@ -726,7 +769,6 @@ new Date().toISOString().split("T")[0]
 });
 
 saveRecords();
-
 renderAll();
 
 }
@@ -749,9 +791,7 @@ mealList.innerHTML += `
 
 <div>
 
-<strong>
-${record.food}
-</strong>
+<strong>${record.food}</strong>
 
 <div class="small">
 ${record.meal}
@@ -804,9 +844,7 @@ storeList.innerHTML += `
 
 <div>
 
-<strong>
-${record.store}
-</strong>
+<strong>${record.store}</strong>
 
 <div class="small">
 ${record.items}
@@ -855,9 +893,7 @@ catList.innerHTML += `
 
 <div>
 
-<strong>
-${record.item}
-</strong>
+<strong>${record.item}</strong>
 
 <div class="small">
 📅 ${record.date}
@@ -889,193 +925,31 @@ function openRecord(id){
 const record =
 records.find(r=>r.id===id);
 
-let html="";
-
-if(record.category==="food"){
-
-html = `
-
+let html = `
 <div class="modal-title">
-✏️ Edit Meal
+Edit Record
 </div>
 
-<input id="editMealFood"
-value="${record.food}">
-
-<input id="editMealType"
-value="${record.meal}">
-
-<input id="editMealRestaurant"
-value="${record.restaurant}">
-
-<input id="editMealPrice"
-value="${record.price}">
-
-<input type="date"
-id="editMealDate"
-value="${record.date}">
-
-<button onclick="saveMealEdit(${record.id})">
-Save
-</button>
-
-<button
-class="delete-btn"
-onclick="deleteRecord(${record.id})">
-Delete
-</button>
-
-`;
-
-}
-
-if(record.category==="grocery"){
-
-html = `
-
-<div class="modal-title">
-✏️ Edit Grocery
+<div class="small">
+Date: ${record.date}
 </div>
 
-<input id="editStoreName"
-value="${record.store}">
-
-<input id="editStoreItems"
-value="${record.items}">
-
-<input id="editStorePrice"
-value="${record.price}">
-
-<input type="date"
-id="editStoreDate"
-value="${record.date}">
-
-<button onclick="saveStoreEdit(${record.id})">
-Save
-</button>
-
-<button
-class="delete-btn"
-onclick="deleteRecord(${record.id})">
-Delete
-</button>
-
-`;
-
-}
-
-if(record.category==="cat"){
-
-html = `
-
-<div class="modal-title">
-✏️ Edit Cat
+<div class="small">
+Price: CAD $${record.price}
 </div>
 
-<input id="editCatItem"
-value="${record.item}">
-
-<input id="editCatPrice"
-value="${record.price}">
-
-<input type="date"
-id="editCatDate"
-value="${record.date}">
-
-<button onclick="saveCatEdit(${record.id})">
-Save
-</button>
-
 <button
-class="delete-btn"
-onclick="deleteRecord(${record.id})">
+onclick="deleteRecord(${record.id})"
+class="delete-btn">
 Delete
 </button>
-
 `;
-
-}
 
 document.getElementById("modalContent")
 .innerHTML = html;
 
 document.getElementById("modal")
 .style.display = "flex";
-
-}
-
-function saveMealEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.food =
-document.getElementById("editMealFood").value;
-
-record.meal =
-document.getElementById("editMealType").value;
-
-record.restaurant =
-document.getElementById("editMealRestaurant").value;
-
-record.price =
-Number(document.getElementById("editMealPrice").value);
-
-record.date =
-document.getElementById("editMealDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function saveStoreEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.store =
-document.getElementById("editStoreName").value;
-
-record.items =
-document.getElementById("editStoreItems").value;
-
-record.price =
-Number(document.getElementById("editStorePrice").value);
-
-record.date =
-document.getElementById("editStoreDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
-
-}
-
-function saveCatEdit(id){
-
-const record =
-records.find(r=>r.id===id);
-
-record.item =
-document.getElementById("editCatItem").value;
-
-record.price =
-Number(document.getElementById("editCatPrice").value);
-
-record.date =
-document.getElementById("editCatDate").value;
-
-saveRecords();
-
-renderAll();
-
-closeModal();
 
 }
 
@@ -1139,7 +1013,9 @@ const monthNames = [
 
 document.getElementById("calendarTitle")
 .innerHTML =
-monthNames[currentMonth] + " " + currentYear;
+monthNames[currentMonth] +
+" " +
+currentYear;
 
 const daysInMonth =
 new Date(
@@ -1246,7 +1122,7 @@ No records
 
 filtered.forEach(record=>{
 
-let title = "";
+let title="";
 
 if(record.category==="food"){
 title="🍳 " + record.food;
@@ -1268,9 +1144,7 @@ background:#f7f2ed;
 padding:14px;
 border-radius:14px;
 margin-top:10px;
-cursor:pointer;
-"
-onclick="openRecord(${record.id})">
+">
 
 <strong>
 ${title}
@@ -1341,9 +1215,7 @@ title=record.item;
 
 timeline.innerHTML += `
 
-<div
-class="timeline-item"
-onclick="openRecord(${record.id})">
+<div class="timeline-item">
 
 <strong>
 ${icon} ${title}
@@ -1495,9 +1367,7 @@ class="month-card"
 onclick="openMonthDetails('${month}')">
 
 <div>
-<strong>
-${month}
-</strong>
+<strong>${month}</strong>
 </div>
 
 <div>
