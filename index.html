@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate</title>
+<title>HeiLog Ultimate v5</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -143,10 +143,6 @@ width:100%;
 margin-top:8px;
 }
 
-button:active{
-transform:scale(.98);
-}
-
 .secondary-btn{
 background:#91a77c;
 }
@@ -193,6 +189,7 @@ padding:10px 6px;
 min-height:80px;
 text-align:center;
 font-size:13px;
+cursor:pointer;
 }
 
 .day-number{
@@ -274,9 +271,9 @@ width:100%;
 max-width:420px;
 border-radius:28px;
 padding:24px;
-animation:pop .2s ease;
 max-height:90vh;
 overflow:auto;
+animation:pop .2s ease;
 }
 
 @keyframes pop{
@@ -316,7 +313,7 @@ color:#4b3d33;
 <h1>HeiLog 🐾</h1>
 
 <div class="subtitle">
-Ultimate Version
+Ultimate v5
 </div>
 </div>
 
@@ -661,7 +658,7 @@ price:Number(price.value || 0),
 
 date:
 date.value ||
-new Date().toISOString()
+new Date().toISOString().split("T")[0]
 
 });
 
@@ -707,7 +704,7 @@ price:Number(price.value || 0),
 
 date:
 date.value ||
-new Date().toISOString()
+new Date().toISOString().split("T")[0]
 
 });
 
@@ -747,7 +744,7 @@ price:Number(price.value || 0),
 
 date:
 date.value ||
-new Date().toISOString()
+new Date().toISOString().split("T")[0]
 
 });
 
@@ -814,7 +811,7 @@ value="${record.price || 0}">
 <input
 type="date"
 id="editMealDate"
-value="${record.date.split("T")[0]}">
+value="${record.date}">
 
 <button
 onclick="saveMealEdit(${record.id})">
@@ -854,7 +851,7 @@ value="${record.price || 0}">
 <input
 type="date"
 id="editStoreDate"
-value="${record.date.split("T")[0]}">
+value="${record.date}">
 
 <button
 onclick="saveStoreEdit(${record.id})">
@@ -890,7 +887,7 @@ value="${record.price || 0}">
 <input
 type="date"
 id="editCatDate"
-value="${record.date.split("T")[0]}">
+value="${record.date}">
 
 <button
 onclick="saveCatEdit(${record.id})">
@@ -996,6 +993,111 @@ closeModal();
 
 }
 
+function openDayRecords(day){
+
+const today = new Date();
+
+const currentMonth =
+today.getMonth();
+
+const currentYear =
+today.getFullYear();
+
+const filtered =
+records.filter(record=>{
+
+const parts =
+record.date.split("-");
+
+const year =
+Number(parts[0]);
+
+const month =
+Number(parts[1]) - 1;
+
+const recordDay =
+Number(parts[2]);
+
+return (
+recordDay===day &&
+month===currentMonth &&
+year===currentYear
+);
+
+});
+
+let html = `
+<div class="modal-title">
+📅 Day ${day}
+</div>
+`;
+
+if(filtered.length===0){
+
+html += `
+<div class="small">
+No records
+</div>
+`;
+
+}else{
+
+filtered.forEach(record=>{
+
+let icon = "🍳";
+let title = "";
+
+if(record.category==="food"){
+icon = "🍳";
+title = record.food;
+}
+
+if(record.category==="grocery"){
+icon = "🛒";
+title = record.items;
+}
+
+if(record.category==="cat"){
+icon = "🐾";
+title = record.item;
+}
+
+html += `
+
+<div
+style="
+padding:12px;
+background:#f7f2ed;
+border-radius:14px;
+margin-top:10px;
+cursor:pointer;
+"
+onclick="openRecord(${record.id})">
+
+<strong>
+${icon} ${title}
+</strong>
+
+<div class="small">
+CAD $${record.price}
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+document.getElementById("modalContent")
+.innerHTML = html;
+
+document.getElementById("modal")
+.style.display = "flex";
+
+}
+
 function closeModal(){
 
 document.getElementById("modal")
@@ -1031,6 +1133,10 @@ ${record.food}
 
 <div class="small">
 📍 ${record.restaurant}
+</div>
+
+<div class="small">
+📅 ${record.date}
 </div>
 
 <div class="small">
@@ -1081,6 +1187,10 @@ ${record.items}
 </div>
 
 <div class="small">
+📅 ${record.date}
+</div>
+
+<div class="small">
 💲 CAD $${record.price}
 </div>
 
@@ -1124,6 +1234,10 @@ ${record.item}
 </strong>
 
 <div class="small">
+📅 ${record.date}
+</div>
+
+<div class="small">
 💲 CAD $${record.price}
 </div>
 
@@ -1154,18 +1268,22 @@ timeline.innerHTML="";
 records.slice(0,20).forEach(record=>{
 
 let icon="🍳";
+let title="";
+
+if(record.category==="food"){
+icon="🍳";
+title=record.food;
+}
 
 if(record.category==="grocery"){
 icon="🛒";
+title=record.items;
 }
 
 if(record.category==="cat"){
 icon="🐾";
+title=record.item;
 }
-
-const formattedDate =
-new Date(record.date)
-.toLocaleDateString();
 
 timeline.innerHTML += `
 <div
@@ -1173,11 +1291,11 @@ class="timeline-item"
 onclick="openRecord(${record.id})">
 
 <strong>
-${icon}
+${icon} ${title}
 </strong>
 
 <div class="small">
-${formattedDate}
+${record.date}
 </div>
 
 </div>
@@ -1213,25 +1331,30 @@ for(let i=1;i<=daysInMonth;i++){
 
 let icons="";
 
-records.forEach(record=>{
+const dayRecords =
+records.filter(record=>{
 
-const recordDate =
-new Date(record.date);
+const parts =
+record.date.split("-");
 
-const recordDay =
-recordDate.getDate();
+const year =
+Number(parts[0]);
 
-const recordMonth =
-recordDate.getMonth();
+const month =
+Number(parts[1]) - 1;
 
-const recordYear =
-recordDate.getFullYear();
+const day =
+Number(parts[2]);
 
-if(
-recordDay===i &&
-recordMonth===currentMonth &&
-recordYear===currentYear
-){
+return (
+day===i &&
+month===currentMonth &&
+year===currentYear
+);
+
+});
+
+dayRecords.forEach(record=>{
 
 if(record.category==="food"){
 icons += "🍳 ";
@@ -1245,12 +1368,13 @@ if(record.category==="cat"){
 icons += "🐾 ";
 }
 
-}
-
 });
 
 grid.innerHTML += `
-<div class="day">
+
+<div
+class="day"
+onclick="openDayRecords(${i})">
 
 <div class="day-number">
 ${i}
@@ -1261,6 +1385,7 @@ ${icons}
 </div>
 
 </div>
+
 `;
 
 }
