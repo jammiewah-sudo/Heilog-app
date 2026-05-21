@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HeiLog Ultimate Final</title>
+<title>HeiLog Ultimate v7</title>
 
 <link rel="apple-touch-icon" href="icon.png">
 
@@ -92,7 +92,6 @@ flex-direction:column;
 justify-content:space-between;
 font-size:32px;
 cursor:pointer;
-transition:.15s;
 }
 
 .card span{
@@ -115,6 +114,13 @@ box-shadow:0 2px 12px rgba(0,0,0,.04);
 
 .panel h2{
 margin-bottom:16px;
+}
+
+.small{
+font-size:13px;
+color:#8a7d74;
+margin-top:6px;
+margin-bottom:6px;
 }
 
 input{
@@ -147,11 +153,6 @@ margin:0;
 font-size:14px;
 }
 
-.delete-btn{
-background:#f6dddd;
-color:#8d4343;
-}
-
 .item{
 background:#faf7f3;
 padding:14px;
@@ -164,13 +165,6 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 gap:12px;
-}
-
-.small{
-font-size:13px;
-color:#8a7d74;
-margin-bottom:6px;
-margin-top:6px;
 }
 
 .calendar-top{
@@ -190,7 +184,7 @@ gap:8px;
 background:white;
 border-radius:16px;
 padding:10px 6px;
-min-height:80px;
+min-height:85px;
 text-align:center;
 font-size:13px;
 cursor:pointer;
@@ -318,7 +312,7 @@ color:#4b3d33;
 <h1>HeiLog 🐾</h1>
 
 <div class="subtitle">
-Ultimate Final
+Ultimate v7
 </div>
 </div>
 
@@ -522,6 +516,28 @@ onclick="changeMonth(1)">
 
 </div>
 
+<div
+style="
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
+margin-bottom:10px;
+font-size:12px;
+color:#8a7d74;
+text-align:center;
+font-weight:700;
+">
+
+<div>Sun</div>
+<div>Mon</div>
+<div>Tue</div>
+<div>Wed</div>
+<div>Thu</div>
+<div>Fri</div>
+<div>Sat</div>
+
+</div>
+
 <div class="calendar-grid"
 id="calendarGrid"></div>
 
@@ -711,7 +727,7 @@ renderAll();
 
 function addMeal(){
 
-records.unshift({
+records.push({
 
 id:Date.now(),
 
@@ -743,7 +759,7 @@ renderAll();
 
 function addStore(){
 
-records.unshift({
+records.push({
 
 id:Date.now(),
 
@@ -772,7 +788,7 @@ renderAll();
 
 function addCat(){
 
-records.unshift({
+records.push({
 
 id:Date.now(),
 
@@ -805,6 +821,9 @@ mealList.innerHTML="";
 
 records
 .filter(r=>r.category==="food")
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
 .forEach(record=>{
 
 mealList.innerHTML += `
@@ -858,6 +877,9 @@ storeList.innerHTML="";
 
 records
 .filter(r=>r.category==="grocery")
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
 .forEach(record=>{
 
 storeList.innerHTML += `
@@ -907,6 +929,9 @@ catList.innerHTML="";
 
 records
 .filter(r=>r.category==="cat")
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
 .forEach(record=>{
 
 catList.innerHTML += `
@@ -1005,12 +1030,27 @@ monthNames[currentMonth] +
 " " +
 currentYear;
 
+const firstDay =
+new Date(
+currentYear,
+currentMonth,
+1
+).getDay();
+
 const daysInMonth =
 new Date(
 currentYear,
 currentMonth + 1,
 0
 ).getDate();
+
+for(let i=0;i<firstDay;i++){
+
+grid.innerHTML += `
+<div></div>
+`;
+
+}
 
 for(let i=1;i<=daysInMonth;i++){
 
@@ -1108,7 +1148,11 @@ No records
 
 }else{
 
-filtered.forEach(record=>{
+filtered
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
+.forEach(record=>{
 
 let title="";
 
@@ -1181,7 +1225,11 @@ y===currentYear
 
 });
 
-filtered.forEach(record=>{
+filtered
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
+.forEach(record=>{
 
 let icon="🍳";
 let title="";
@@ -1387,7 +1435,11 @@ let html = `
 </div>
 `;
 
-filtered.forEach(record=>{
+filtered
+.sort((a,b)=>
+new Date(b.date)-new Date(a.date)
+)
+.forEach(record=>{
 
 total += record.price;
 
